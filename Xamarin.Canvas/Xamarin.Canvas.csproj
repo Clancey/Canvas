@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{2D733E54-4C10-4CEC-B34B-72EA016491A6}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Xamarin.Canvas</RootNamespace>
+    <AssemblyName>Xamarin.Canvas</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>False</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <ConsolePause>False</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <ConsolePause>False</ConsolePause>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Node.cs" />
+    <Compile Include="ICanvas.cs" />
+    <Compile Include="Point.cs" />
+    <Compile Include="MenuItemActivatedArgs.cs" />
+    <Compile Include="Color.cs" />
+    <Compile Include="EnumerableExtensions.cs" />
+    <Compile Include="BoxNode.cs" />
+    <Compile Include="IRenderer.cs" />
+    <Compile Include="GroupNode.cs" />
+    <Compile Include="IKeyEvent.cs" />
+    <Compile Include="PolygonNode.cs" />
+    <Compile Include="HBoxNode.cs" />
+    <Compile Include="ImageNode.cs" />
+    <Compile Include="Size.cs" />
+    <Compile Include="LabelNode.cs" />
+    <Compile Include="CachedFunc.cs" />
+    <Compile Include="ICanvasEngine.cs" />
+    <Compile Include="ButtonNode.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Xamarin.Animation\Xamarin.Motion.csproj">
+      <Project>{5DFD8243-3F95-48EB-BC87-00955F136D8F}</Project>
+      <Name>Xamarin.Motion</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>
