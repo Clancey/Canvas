@@ -24,6 +24,28 @@ namespace Xamarin.Canvas
 			children = new List<Node> ();
 			roChildren = children.AsReadOnly ();
 		}
+
+		public void RaiseChild (Node node)
+		{
+			if (!children.Contains (node) || children.Last () == node)
+				return;
+			
+			children.Remove (node);
+			children.Add (node);
+			
+			OnChildrenReordered ();
+		}
+
+		public void LowerChild (Node node)
+		{
+			if (!children.Contains (node) || children.First () == node)
+				return;
+			
+			children.Remove (node);
+			children.Insert (0, node);
+			
+			OnChildrenReordered ();
+		}
 		
 		public virtual void Add (Node node)
 		{

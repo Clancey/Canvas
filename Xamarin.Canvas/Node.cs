@@ -241,6 +241,8 @@ namespace Xamarin.Canvas
 		public event EventHandler ActivatedEvent;
 		public event EventHandler CanvasSet;
 
+		public event EventHandler ChildrenReordered;
+
 		public event EventHandler RedrawNeeded;
 
 		public event EventHandler<MenuItemActivatedArgs> MenuItemActivatedEvent;
@@ -653,6 +655,12 @@ namespace Xamarin.Canvas
 			if (Children == null)
 				return Enumerable.Empty<Node> ();
 			return Children.Concat(Children.SelectMany(n => n.AllChildren()));
+		}
+
+		protected void OnChildrenReordered ()
+		{
+			if (ChildrenReordered != null)
+				ChildrenReordered (this, EventArgs.Empty);
 		}
 	}
 	

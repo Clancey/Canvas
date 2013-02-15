@@ -36,6 +36,17 @@ namespace Xamarin.Canvas.iOS
 			AddGestureRecognizer (doubleTouchTap);
 			AddGestureRecognizer (tripleTouchTap);
 			AddGestureRecognizer (doubleTap);
+
+			node.ChildrenReordered += (o, a) => UpdateChildrenOrder ();
+		}
+
+		void UpdateChildrenOrder ()
+		{
+			foreach (var child in node.Children) {
+				UIView nativeControl = child.Renderer as UIView;
+				nativeControl.RemoveFromSuperview ();
+				AddSubview (nativeControl);
+			}
 		}
 
 		public override void LayoutSubviews ()

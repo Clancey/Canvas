@@ -137,7 +137,6 @@ Global
 		{B230077D-9C80-460A-89C1-C17DDEE53E8F}.Release|iPhoneSimulator.ActiveCfg = Release|x86
 		{B230077D-9C80-460A-89C1-C17DDEE53E8F}.Release|iPhoneSimulator.Build.0 = Release|x86
 		{B230077D-9C80-460A-89C1-C17DDEE53E8F}.Release|x86.ActiveCfg = Release|x86
-		{B230077D-9C80-460A-89C1-C17DDEE53E8F}.Release|x86.Build.0 = Release|x86
 		{B8C351D2-DB4E-40FF-8AD0-46AA9A1EB981}.Ad-Hoc|iPhone.ActiveCfg = Debug|x86
 		{B8C351D2-DB4E-40FF-8AD0-46AA9A1EB981}.Ad-Hoc|iPhone.Build.0 = Debug|x86
 		{B8C351D2-DB4E-40FF-8AD0-46AA9A1EB981}.AppStore|iPhone.ActiveCfg = Debug|x86
