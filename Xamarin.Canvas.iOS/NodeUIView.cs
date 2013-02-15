@@ -26,18 +26,21 @@ namespace Xamarin.Canvas.iOS
 			
 			node.RedrawNeeded += (o, a) => UpdateNativeWidget ();
 			node.SizeChanged += (o, a) => UpdateNativeWidget ();
-			
-			UpdateNativeWidget ();
 
 			singleTouchTap = CreateTapRecognizer (1, 1, r => node.Tap (new TapEventArgs (1, UIStateToNodeState (r.State))));
 			doubleTouchTap = CreateTapRecognizer (2, 1, r => node.Tap (new TapEventArgs (2, UIStateToNodeState (r.State))));
 			tripleTouchTap = CreateTapRecognizer (3, 1, r => node.Tap (new TapEventArgs (3, UIStateToNodeState (r.State))));
-			doubleTap = CreateTapRecognizer (1, 2, r => node.Tap (new TapEventArgs (2, UIStateToNodeState (r.State))));
+			doubleTap      = CreateTapRecognizer (1, 2, r => node.Tap (new TapEventArgs (2, UIStateToNodeState (r.State))));
 
 			AddGestureRecognizer (singleTouchTap);
 			AddGestureRecognizer (doubleTouchTap);
 			AddGestureRecognizer (tripleTouchTap);
 			AddGestureRecognizer (doubleTap);
+		}
+
+		public override void LayoutSubviews ()
+		{
+			UpdateNativeWidget ();
 		}
 
 		GestureState UIStateToNodeState (UIGestureRecognizerState state)
@@ -61,18 +64,16 @@ namespace Xamarin.Canvas.iOS
 
 		UITapGestureRecognizer CreateTapRecognizer (int numFingers, int numTaps, Action<UITapGestureRecognizer> action)
 		{
-			UITapGestureRecognizer result = new UITapGestureRecognizer (r => {
-				action (r);
-				Console.WriteLine ("Tap");
-			});
+			UITapGestureRecognizer result = new UITapGestureRecognizer (action);
 			result.NumberOfTouchesRequired = (uint)numFingers;
 			result.NumberOfTapsRequired = (uint)numTaps;
 			return result;
 		}
 		
-		void UpdateNativeWidget ()
+		protected virtual void UpdateNativeWidget ()
 		{
 			Frame = new RectangleF ((float)node.X, (float)node.Y, (float)node.Width, (float)node.Height);
+			Layer.AnchorPoint = new PointF ((float)node.AnchorX / (float)node.Width, (float)node.AnchorY / (float)node.Height);
 			
 			CATransform3D transform = CATransform3D.Identity;
 			transform.m34 = 1.0f / -2000f;

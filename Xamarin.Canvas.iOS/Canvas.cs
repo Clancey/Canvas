@@ -15,12 +15,15 @@ namespace Xamarin.Canvas.iOS
 	{
 		RootNode root;
 
+		public bool Supports3D { get { return true; } }
+
 		public Canvas ()
 		{
 			Motion.Tweener.Sync = new UISyncInvoke ();
 			root = new RootNode ();
 			root.ChildAdded += (o, e) => AddChild (o as Node);
 			root.ChildRemoved += (o, e) => RemoveChild (o as Node);
+			root.Canvas = this;
 
 			AddChild (root);
 		}
@@ -28,18 +31,17 @@ namespace Xamarin.Canvas.iOS
 		public override void LayoutSubviews ()
 		{
 			base.LayoutSubviews ();
-
 			root.SetSize (Frame.Width, Frame.Height);
 		}
 
 		NodeUIView ViewForNode (Node node)
 		{
-			if (node is BoxNode) {
+			if (node is BoxNode)
 				return new BoxNodeRenderer (node as BoxNode);
-			}
-			var result = new NodeUIView (node);
-			Console.WriteLine (Frame);
-			return result;
+			if (node is LabelNode)
+				return new LabelNodeRenderer (node as LabelNode);
+
+			return new NodeUIView (node);
 		}
 
 		void AddChild (Node node)
@@ -98,7 +100,7 @@ namespace Xamarin.Canvas.iOS
 		public Size TextExtents (string text, TextOptions options)
 		{
 			NSString str = new NSString (text);
-			var size = str.StringSize (UIFont.SystemFontOfSize (UIFont.SystemFontSize));
+			var size = str.StringSize (UIFont.SystemFontOfSize (UIFont.LabelFontSize));
 			return new Size (size.Width, size.Height);
 		}
 		#endregion

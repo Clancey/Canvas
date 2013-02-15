@@ -16,6 +16,8 @@ namespace Xamarin.Canvas.Mac
 		NSButton testButton;
 		UISyncInvoke uisync;
 
+		public bool Supports3D { get { return false; } }
+
 		public Canvas ()
 		{
 			root = new RootNode ();

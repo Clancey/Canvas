@@ -50,6 +50,12 @@ namespace Xamarin.Canvas.iOS
 			box.ActivatedEvent += (object sender, EventArgs e) => box.RelRotateTo (50);
 			canvas.Root.Add (box);
 
+			LabelNode label = new LabelNode ("Label Test");
+			label.Color = new Color (1, 1, 1);
+			label.X = 50;
+			label.Y = 50;
+			canvas.Root.Add (label);
+
 			View = canvas;
 		}
 	}

@@ -14,6 +14,8 @@ namespace Xamarin.Canvas.Cairo
 		Func<Context> contextInitializer;
 		Func<Pango.Context> pangoInitializer;
 
+		public bool Supports3D { get { return false; } }
+
 		public Engine (Func<Context> contextInitializer, Func<Pango.Context> pangoInitializer)
 		{
 			this.contextInitializer = contextInitializer;

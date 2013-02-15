@@ -29,5 +29,5 @@ namespace Xamarin.Canvas.iOS
 			context.FillRect (rect);
 		}
 	}
-	
+
 }

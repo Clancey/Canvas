@@ -11,6 +11,8 @@ namespace Xamarin.Canvas
 
 	public interface ICanvasEngine
 	{
+		bool Supports3D { get; }
+
 		void RenderScene (Node rootNode);
 
 		Node InputNodeAt (Node rootNode, double x, double y);
