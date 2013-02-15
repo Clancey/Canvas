@@ -11,34 +11,31 @@ using MonoTouch.Foundation;
 
 namespace Xamarin.Canvas.iOS
 {
-	public class LabelNodeRenderer : NodeUIView
+	public class ImageNodeRenderer: NodeUIView
 	{
-		LabelNode node;
-		UILabel label;
+		ImageNode node;
+		UIImageView image;
 		
-		public LabelNodeRenderer (LabelNode node)
+		public ImageNodeRenderer (ImageNode node)
 			: base (node)
 		{
 			this.node = node;
-			label = new UILabel ();
-			AddSubview (label);
+			image = new UIImageView (new UIImage (node.File));
+			AddSubview (image);
 		}
 
 		protected override void UpdateNativeWidget ()
-		{
-			label.Text = node.Text;
-			label.TextColor = node.Color.ToUIColor ();
-			label.BackgroundColor = UIColor.Clear;
-
+		{	
 			base.UpdateNativeWidget ();
-
-			label.Frame = new RectangleF (PointF.Empty, Frame.Size);
+			
+			image.Frame = new RectangleF (PointF.Empty, Frame.Size);
 		}
-
+		
 		public override void LayoutSubviews ()
 		{
 			base.LayoutSubviews ();
-			label.Frame = new RectangleF (PointF.Empty, Frame.Size);
+			image.Frame = new RectangleF (PointF.Empty, Frame.Size);
 		}
 	}
+	
 }

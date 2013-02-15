@@ -36,10 +36,15 @@ namespace Xamarin.Canvas.iOS
 
 		NodeUIView ViewForNode (Node node)
 		{
+			// FIXME Loading needs to be configurable by the user
 			if (node is BoxNode)
 				return new BoxNodeRenderer (node as BoxNode);
 			if (node is LabelNode)
 				return new LabelNodeRenderer (node as LabelNode);
+			if (node is PolygonNode)
+				return new PolygonNodeRenderer (node as PolygonNode);
+			if (node is ImageNode)
+				return new ImageNodeRenderer (node as ImageNode);
 
 			return new NodeUIView (node);
 		}
