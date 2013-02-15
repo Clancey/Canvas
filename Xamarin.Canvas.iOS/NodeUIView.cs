@@ -73,7 +73,7 @@ namespace Xamarin.Canvas.iOS
 		protected virtual void UpdateNativeWidget ()
 		{
 			Frame = new RectangleF ((float)node.X, (float)node.Y, (float)node.Width, (float)node.Height);
-			Layer.AnchorPoint = new PointF ((float)node.AnchorX / (float)node.Width, (float)node.AnchorY / (float)node.Height);
+			Layer.AnchorPoint = new PointF ((float)node.AnchorX, (float)node.AnchorY);
 			
 			CATransform3D transform = CATransform3D.Identity;
 			transform.m34 = 1.0f / -2000f;

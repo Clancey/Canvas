@@ -23,13 +23,6 @@ namespace Xamarin.Canvas.iOS
 			image = new UIImageView (new UIImage (node.File));
 			AddSubview (image);
 		}
-
-		protected override void UpdateNativeWidget ()
-		{	
-			base.UpdateNativeWidget ();
-			
-			image.Frame = new RectangleF (PointF.Empty, Frame.Size);
-		}
 		
 		public override void LayoutSubviews ()
 		{

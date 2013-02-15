@@ -19,6 +19,11 @@ namespace Xamarin.Canvas
 			File = file;
 			XAlign = 0.5;
 			YAlign = 0.5;
+
+			CanvasSet += (sender, e) => {
+				Size size = Canvas.Engine.ImageSize (File);
+				SetPreferedSize (size.Width, size.Height);
+			};
 		}
 	}
 }

@@ -108,6 +108,14 @@ namespace Xamarin.Canvas.iOS
 			var size = str.StringSize (UIFont.SystemFontOfSize (UIFont.LabelFontSize));
 			return new Size (size.Width, size.Height);
 		}
+
+		public Size ImageSize (string file)
+		{
+			var source = MonoTouch.ImageIO.CGImageSource.FromUrl (new NSUrl (file, false));
+			var props = source.GetProperties (0);
+			Size result = new Size (props.PixelWidth ?? 0, props.PixelHeight ?? 0);
+			return result;
+		}
 		#endregion
 	}
 }

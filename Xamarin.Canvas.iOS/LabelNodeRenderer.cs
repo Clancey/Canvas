@@ -31,8 +31,6 @@ namespace Xamarin.Canvas.iOS
 			label.BackgroundColor = UIColor.Clear;
 
 			base.UpdateNativeWidget ();
-
-			label.Frame = new RectangleF (PointF.Empty, Frame.Size);
 		}
 
 		public override void LayoutSubviews ()

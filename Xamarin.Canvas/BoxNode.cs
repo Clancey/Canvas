@@ -13,8 +13,6 @@ namespace Xamarin.Canvas
 		public BoxNode (Color color, int width = 1, int height = 1)
 		{
 			Color = color;
-			AnchorX = width / 2.0;
-			AnchorY = height / 2.0;
 			
 			SetPreferedSize (width, height);
 		}

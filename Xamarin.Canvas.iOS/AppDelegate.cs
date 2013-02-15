@@ -47,7 +47,6 @@ namespace Xamarin.Canvas.iOS
 			BoxNode box = new BoxNode (new Color (1, 0, 0), 100, 100);
 			box.X = 100;
 			box.Y = 100;
-			box.ActivatedEvent += (object sender, EventArgs e) => box.RelRotateTo (50);
 			canvas.Root.Add (box);
 
 			LabelNode label = new LabelNode ("Label Test");
@@ -55,6 +54,10 @@ namespace Xamarin.Canvas.iOS
 			label.X = 50;
 			label.Y = 50;
 			canvas.Root.Add (label);
+
+			ImageNode image = new ImageNode ("cover1.jpg");
+			canvas.Root.Add (image);
+			image.ActivatedEvent += (object sender, EventArgs e) => image.RelRotateTo (500, 10000);
 
 			View = canvas;
 		}

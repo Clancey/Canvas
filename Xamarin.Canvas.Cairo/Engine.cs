@@ -42,6 +42,14 @@ namespace Xamarin.Canvas.Cairo
 		}
 
 		#region Text Handling
+		public Size ImageSize (string file)
+		{
+			ImageSurface image = new ImageSurface (file);
+			Size result = new Size (image.Width, image.Height);
+			(image as IDisposable).Dispose ();
+			return result;
+		}
+
 		public Size TextExtents (string text, TextOptions options)
 		{
 			int w, h;

@@ -10,11 +10,14 @@ namespace Xamarin.Canvas.Cairo
 	{
 		public static Matrix GetTransform (this Node node)
 		{
+			double anchorX = node.AnchorX * node.Width;
+			double anchorY = node.AnchorY * node.Height;
+
 			Matrix transform = new Matrix ();
-			transform.Translate (node.X + node.AnchorX, node.Y + node.AnchorY);
+			transform.Translate (node.X + anchorX, node.Y + anchorY);
 			transform.Rotate (node.Rotation);
 			transform.Scale (node.Scale, node.Scale);
-			transform.Translate (-node.AnchorX, -node.AnchorY);
+			transform.Translate (-anchorX, -anchorY);
 			
 			return transform;
 		}

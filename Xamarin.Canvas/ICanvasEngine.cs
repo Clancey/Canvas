@@ -20,6 +20,8 @@ namespace Xamarin.Canvas
 		void SetBackground (Color color);
 
 		Size TextExtents (string text, TextOptions options);
+
+		Size ImageSize (string file);
 	}
 }
 

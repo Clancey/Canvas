@@ -107,4 +107,16 @@
     <Compile Include="ImageNodeRenderer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <BundleResource Include="Resources\cover1.jpg" />
+    <BundleResource Include="Resources\cover2.jpg" />
+    <BundleResource Include="Resources\cover3.jpg" />
+    <BundleResource Include="Resources\cover4.jpg" />
+    <BundleResource Include="Resources\cover5.jpg" />
+    <BundleResource Include="Resources\cover6.jpg" />
+    <BundleResource Include="Resources\cover7.jpg" />
+    <BundleResource Include="Resources\cover8.jpg" />
+    <BundleResource Include="Resources\cover9.jpg" />
+    <BundleResource Include="Resources\cover10.jpg" />
+  </ItemGroup>
 </Project>

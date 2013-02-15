@@ -287,6 +287,9 @@ namespace Xamarin.Canvas
 			Width = Height = -1;
 			CanFocus = true;
 			Sensative = true;
+
+			AnchorX = 0.5;
+			AnchorY = 0.5;
 		}
 
 		protected void SendChildAdded (Node child)

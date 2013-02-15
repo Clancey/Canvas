@@ -96,6 +96,11 @@ namespace Xamarin.Canvas.Mac
 			return new Size ();
 		}
 
+		public Size ImageSize (string file)
+		{
+			return new Size ();
+		}
+
 		#endregion
 	}
 }
