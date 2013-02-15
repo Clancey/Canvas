@@ -6,7 +6,7 @@ using Cairo;
 
 namespace Xamarin.Canvas.Cairo
 {
-	public interface ICairoRenderer : IRenderer
+	public interface ICairoRenderer
 	{
 		bool Clip { get; }
 		bool Post { get; }
@@ -15,6 +15,8 @@ namespace Xamarin.Canvas.Cairo
 		void Render        (Node node, Context context);
 		void PostRender    (Node node, Context context);
 		void ClipChildren  (Node node, Context context);
+
+		int Affinity (Node node);
 	}
 
 }

@@ -8,7 +8,7 @@
     <ProjectGuid>{5DFD8243-3F95-48EB-BC87-00955F136D8F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>Xamarin.Animation</RootNamespace>
-    <AssemblyName>Xamarin.Animation</AssemblyName>
+    <AssemblyName>Xamarin.Motion</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>True</DebugSymbols>

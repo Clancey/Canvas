@@ -43,7 +43,6 @@
     <Compile Include="Color.cs" />
     <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="BoxNode.cs" />
-    <Compile Include="IRenderer.cs" />
     <Compile Include="GroupNode.cs" />
     <Compile Include="IKeyEvent.cs" />
     <Compile Include="PolygonNode.cs" />

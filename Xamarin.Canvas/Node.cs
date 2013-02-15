@@ -31,6 +31,28 @@ namespace Xamarin.Canvas
 		Button5Mask = 1 << 12, 
 	}
 
+	public enum GestureState
+	{
+		Began,
+		Update,
+		Ended,
+		Failed,
+		Cancelled,
+		Possible
+	}
+
+	public class TapEventArgs : EventArgs
+	{
+		public int NumPresses { get; private set; }
+		public GestureState State { get; private set; }
+
+		public TapEventArgs (int presses, GestureState state)
+		{
+			NumPresses = presses;
+			State = state;
+		}
+	}
+
 	public class ButtonEventArgs : EventArgs
 	{
 		public double X { get; private set; }
@@ -104,7 +126,7 @@ namespace Xamarin.Canvas
 		public bool HasFocus { get; private set; }
 		public List<MenuEntry> MenuItems { get; set; }
 
-		public IRenderer Renderer { get; set; }
+		public object Renderer { get; set; }
 		
 		NodeState state;
 		public NodeState State {
@@ -216,7 +238,7 @@ namespace Xamarin.Canvas
 			}
 		}
 		
-		public event EventHandler ClickEvent;
+		public event EventHandler ActivatedEvent;
 		public event EventHandler CanvasSet;
 
 		public event EventHandler RedrawNeeded;
@@ -228,6 +250,9 @@ namespace Xamarin.Canvas
 		
 		public event EventHandler SizeChanged;
 		public event EventHandler PreferedSizeChanged;
+
+		public event EventHandler ChildAdded;
+		public event EventHandler ChildRemoved;
 		
 		public virtual ReadOnlyCollection<Node> Children {
 			get {
@@ -262,6 +287,24 @@ namespace Xamarin.Canvas
 			Width = Height = -1;
 			CanFocus = true;
 			Sensative = true;
+		}
+
+		protected void SendChildAdded (Node child)
+		{
+			if (ChildAdded != null)
+				ChildAdded (child, EventArgs.Empty);
+
+			if (Parent != null)
+				Parent.SendChildAdded (child);
+		}
+
+		protected void SendChildRemoved (Node child)
+		{
+			if (ChildRemoved != null)
+				ChildRemoved (child, EventArgs.Empty);
+			
+			if (Parent != null)
+				Parent.SendChildRemoved (child);
 		}
 		
 		public void MouseIn ()
@@ -324,11 +367,11 @@ namespace Xamarin.Canvas
 			OnFocusOut ();
 		}
 		
-		public void Clicked (double x, double y, ModifierType state)
+		public void Activated ()
 		{
-			OnClicked (x, y, state);
-			if (ClickEvent != null)
-				ClickEvent (this, EventArgs.Empty);
+			OnActivated ();
+			if (ActivatedEvent != null)
+				ActivatedEvent (this, EventArgs.Empty);
 		}
 		
 		protected virtual void MoveChildFocus (bool reverse)
@@ -365,6 +408,19 @@ namespace Xamarin.Canvas
 		public void KeyRelease (IKeyEvent evnt)
 		{
 			OnKeyRelease (evnt);
+		}
+
+		public void Tap (TapEventArgs args)
+		{
+			OnTap (args);
+
+			if (args.NumPresses == 1 && args.State == GestureState.Ended)
+				Activated ();
+		}
+
+		public void DoubleTap (TapEventArgs args)
+		{
+			OnDoubleTap (args);
 		}
 		
 		private Point GetPoint(double t, Point p0, Point p1, Point p2, Point p3)
@@ -541,13 +597,15 @@ namespace Xamarin.Canvas
 		protected virtual void OnMouseMotion (double x, double y, ModifierType state) {}
 		protected virtual void OnButtonPress (ButtonEventArgs args) {}
 		protected virtual void OnButtonRelease (ButtonEventArgs args) {}
-		protected virtual void OnClicked (double x, double y, ModifierType state) {}
+		protected virtual void OnActivated () {}
 		protected virtual void OnFocusIn () {}
 		protected virtual void OnFocusOut () {}
 		protected virtual void OnKeyPress (IKeyEvent evnt) {}
 		protected virtual void OnKeyRelease (IKeyEvent evnt) {}
 		protected virtual void OnSizeRequested (ref double width, ref double height) {}
 		protected virtual void OnSizeAllocated (double width, double height) {}
+		protected virtual void OnTap (TapEventArgs args) {}
+		protected virtual void OnDoubleTap (TapEventArgs args) {}
 		
 		public void QueueDraw ()
 		{

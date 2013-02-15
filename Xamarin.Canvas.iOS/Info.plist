@@ -22,5 +22,7 @@
 	</array>
 	<key>MinimumOSVersion</key>
 	<string>3.2</string>
+	<key>UIViewEdgeAntialiasing</key>
+	<true/>
 </dict>
 </plist>

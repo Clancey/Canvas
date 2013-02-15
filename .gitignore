@@ -32,3 +32,5 @@ Xamarin.Canvas.Mac/bin/Debug/Xamarin.Canvas.Mac.app/Contents/MacOS/Xamarin.Canva
 Xamarin.Canvas.Mac/bin/Debug/Xamarin.Canvas.Mac.app/Contents/Resources/MainMenu.nib
 
 Xamarin.Canvas.Mac/bin/Debug/Xamarin.Canvas.Mac.app/Contents/Resources/MainWindow.nib
+
+Xamarin.Canvas.iOS/obj/Debug/monotouch_dll_content_processed

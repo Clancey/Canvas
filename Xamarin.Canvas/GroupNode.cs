@@ -33,6 +33,9 @@ namespace Xamarin.Canvas
 			if (Canvas != null)
 				node.Canvas = Canvas;
 			QueueDraw ();
+
+			node.SetSize (node.PreferedWidth, node.PreferedHeight);
+			SendChildAdded (node);
 		}
 		
 		protected virtual void OnChildPreferedSizeChanged (object sender, EventArgs e)
@@ -47,6 +50,8 @@ namespace Xamarin.Canvas
 				node.Parent = null;
 				node.PreferedSizeChanged -= OnChildPreferedSizeChanged;
 				QueueDraw ();
+
+				SendChildRemoved (node);
 			}
 		}
 		

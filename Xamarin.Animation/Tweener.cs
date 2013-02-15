@@ -84,7 +84,7 @@ namespace Xamarin.Motion
 				Value = Easing (rawValue);
 				if (ValueUpdated != null)
 					ValueUpdated (this, EventArgs.Empty);
-				
+
 				if (rawValue >= 1.0f)
 				{
 					if (Loop) {

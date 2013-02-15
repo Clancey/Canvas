@@ -80,6 +80,12 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="monotouch" />
+    <Reference Include="Xamarin.Canvas">
+      <HintPath>..\Xamarin.Canvas\bin\Debug\Xamarin.Canvas.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Motion">
+      <HintPath>..\Xamarin.Animation\bin\Debug\Xamarin.Motion.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
@@ -91,6 +97,11 @@
     <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
     <Compile Include="Canvas.cs" />
+    <Compile Include="ColorExtensions.cs" />
+    <Compile Include="ICanvasRenderer.cs" />
+    <Compile Include="NodeUIView.cs" />
+    <Compile Include="BoxNodeRenderer.cs" />
+    <Compile Include="UISyncInvoke.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

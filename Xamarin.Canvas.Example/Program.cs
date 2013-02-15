@@ -40,7 +40,7 @@ namespace Xamarin.Canvas.Example
 			canvas.Root.Add (label);
 
 			Random r = new Random ();
-			box.ClickEvent += (sender, e) => {
+			box.ActivatedEvent += (sender, e) => {
 				box.RotateTo (r.NextDouble () * 5);
 			};
 

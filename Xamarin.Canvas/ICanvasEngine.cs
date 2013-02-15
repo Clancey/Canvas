@@ -11,8 +11,6 @@ namespace Xamarin.Canvas
 
 	public interface ICanvasEngine
 	{
-		bool InsertRenderer (IRenderer renderer);
-
 		void RenderScene (Node rootNode);
 
 		Node InputNodeAt (Node rootNode, double x, double y);

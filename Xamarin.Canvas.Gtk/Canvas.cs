@@ -282,7 +282,7 @@ namespace Xamarin.Canvas.Gtk
 				MouseGrabNode.ButtonRelease (new ButtonEventArgs (point.X, point.Y, evnt.XRoot, evnt.YRoot, evnt.Button, (ModifierType)evnt.State));
 				
 				if (element == MouseGrabNode && !dragging) {
-					element.Clicked (point.X, point.Y, (ModifierType)evnt.State);
+					element.Activated ();
 					if (element.CanFocus)
 						FocusedNode = element;
 				}

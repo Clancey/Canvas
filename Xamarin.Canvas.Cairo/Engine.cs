@@ -146,9 +146,9 @@ namespace Xamarin.Canvas.Cairo
 			context.Restore ();
 		}
 
-		public bool InsertRenderer (IRenderer renderer)
+		public bool InsertRenderer (ICairoRenderer renderer)
 		{
-			var cairoRenderer = renderer as ICairoRenderer;
+			var cairoRenderer = renderer;
 
 			if (cairoRenderer == null)
 				return false;

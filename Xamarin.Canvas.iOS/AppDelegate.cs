@@ -42,7 +42,15 @@ namespace Xamarin.Canvas.iOS
 	{
 		public override void LoadView ()
 		{
-			View = new Canvas ();
+			Canvas canvas = new Canvas ();
+
+			BoxNode box = new BoxNode (new Color (1, 0, 0), 100, 100);
+			box.X = 100;
+			box.Y = 100;
+			box.ActivatedEvent += (object sender, EventArgs e) => box.RelRotateTo (50);
+			canvas.Root.Add (box);
+
+			View = canvas;
 		}
 	}
 }

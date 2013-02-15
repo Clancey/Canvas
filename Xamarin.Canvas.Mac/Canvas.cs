@@ -4,19 +4,24 @@ using System.Linq;
 using MonoMac.Foundation;
 using MonoMac.AppKit;
 using MonoMac.CoreAnimation;
+using System.ComponentModel;
 
 namespace Xamarin.Canvas.Mac
 {
+
 	public class Canvas : NSView, ICanvas, ICanvasEngine
 	{
 		RootNode root;
-		List<IRenderer> renderers;
+		List<object> renderers;
 		NSButton testButton;
+		UISyncInvoke uisync;
 
 		public Canvas ()
 		{
 			root = new RootNode ();
-			renderers = new List<IRenderer> ();
+			renderers = new List<object> ();
+			uisync = new UISyncInvoke ();
+			Motion.Tweener.Sync = uisync;
 
 			testButton = new NSButton (new System.Drawing.RectangleF (100, 100, 100, 50));
 			testButton.BezelStyle = NSBezelStyle.Rounded;
@@ -68,11 +73,6 @@ namespace Xamarin.Canvas.Mac
 		#endregion
 
 		#region ICanvasEngine implementation
-
-		public bool InsertRenderer (IRenderer renderer)
-		{
-			return false;
-		}
 
 		public void RenderScene (Node rootNode)
 		{
