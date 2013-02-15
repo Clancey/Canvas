@@ -101,7 +101,6 @@
     <Compile Include="ICanvasRenderer.cs" />
     <Compile Include="NodeUIView.cs" />
     <Compile Include="BoxNodeRenderer.cs" />
-    <Compile Include="UISyncInvoke.cs" />
     <Compile Include="LabelNodeRenderer.cs" />
     <Compile Include="PolygonNodeRenderer.cs" />
     <Compile Include="ImageNodeRenderer.cs" />

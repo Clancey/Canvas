@@ -22,12 +22,13 @@ namespace Xamarin.Canvas.iOS
 			this.node = node;
 			image = new UIImageView (new UIImage (node.File));
 			AddSubview (image);
+			Console.WriteLine ("Create Image Node");
 		}
 		
 		public override void LayoutSubviews ()
 		{
 			base.LayoutSubviews ();
-			image.Frame = new RectangleF (PointF.Empty, Frame.Size);
+			image.Frame = new RectangleF (0, 0, (float) node.Width, (float) node.Height);
 		}
 	}
 	

@@ -11,7 +11,7 @@ using MonoTouch.Foundation;
 
 namespace Xamarin.Canvas.iOS
 {
-	public class Canvas : UIView, ICanvas, ICanvasEngine
+	public class Canvas : UIView, ICanvas, ICanvasEngine, ISynchronizeInvoke
 	{
 		RootNode root;
 
@@ -19,7 +19,7 @@ namespace Xamarin.Canvas.iOS
 
 		public Canvas ()
 		{
-			Motion.Tweener.Sync = new UISyncInvoke ();
+			Motion.Tweener.Sync = this;
 			root = new RootNode ();
 			root.ChildAdded += (o, e) => AddChild (o as Node);
 			root.ChildRemoved += (o, e) => RemoveChild (o as Node);
@@ -51,15 +51,21 @@ namespace Xamarin.Canvas.iOS
 
 		void AddChild (Node node)
 		{
-			NodeUIView view = ViewForNode (node);
-			node.Renderer = view;
-
-			if (node.Parent != null) {
-				NodeUIView parentView = node.Parent.Renderer as NodeUIView;
-				parentView.AddSubview (view);
-			} else {
-				AddSubview (view);
+			if (node.Renderer == null) {
+				NodeUIView view = ViewForNode (node);
+				node.Renderer = view;
+				
+				if (node.Parent != null) {
+					NodeUIView parentView = node.Parent.Renderer as NodeUIView;
+					parentView.AddSubview (view);
+				} else {
+					AddSubview (view);
+				}
 			}
+
+			if (node.Children != null)
+				foreach (Node child in node.Children)
+					AddChild (child);
 		}
 
 		void RemoveChild (Node node)
@@ -116,6 +122,31 @@ namespace Xamarin.Canvas.iOS
 			Size result = new Size (props.PixelWidth ?? 0, props.PixelHeight ?? 0);
 			return result;
 		}
+		#endregion
+
+		#region ISynchronizeInvoke implementation
+		
+		public IAsyncResult BeginInvoke (Delegate method, object[] args)
+		{
+			InvokeOnMainThread (() => method.DynamicInvoke (args));
+			return null;
+		}
+		
+		public object EndInvoke (IAsyncResult result)
+		{
+			return null;
+		}
+		
+		public object Invoke (Delegate method, object[] args)
+		{
+			InvokeOnMainThread (() => method.DynamicInvoke (args));
+			return null;
+		}
+		
+		public bool InvokeRequired {
+			get { return true; }
+		}
+		
 		#endregion
 	}
 }
