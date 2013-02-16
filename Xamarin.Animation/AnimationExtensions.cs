@@ -109,7 +109,7 @@ namespace Xamarin.Motion
 			info.tweener = tweener;
 			info.callback = step;
 			info.finished = final;
-			info.repeat = repeat ?? (() => false);
+			info.repeat = repeat;
 			info.Owner = self;
 			
 			animations[name] = info;
@@ -155,7 +155,9 @@ namespace Xamarin.Motion
 			Tweener tweener = o as Tweener;
 			Info info = animations[tweener.Handle];
 			
-			bool repeat = info.repeat ();
+			bool repeat = false;
+			if (info.repeat != null)
+				repeat = info.repeat ();
 			
 			info.callback (tweener.Value);
 			

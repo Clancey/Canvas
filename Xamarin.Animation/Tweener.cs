@@ -32,10 +32,61 @@ using System.Timers;
 
 namespace Xamarin.Motion
 {
-	
+	internal class Ticker
+	{
+		Timer timer;
+		List<Tuple<int, Func<bool>>> timeouts;
+		int count;
+
+		public Ticker ()
+		{
+			count = 0;
+			timer = new Timer (16);
+			timer.Elapsed += HandleElapsed;
+			timer.Start ();
+			timeouts = new List<Tuple<int, Func<bool>>> ();
+		}
+
+		void HandleElapsed (object sender, ElapsedEventArgs e)
+		{
+			Tweener.Sync.Invoke (new Action (() => SendSignals ()), null);
+		}
+
+		void SendSignals ()
+		{
+			List<int> removals = new List<int> ();
+			foreach (var timeout in timeouts) {
+				bool remove = !timeout.Item2 ();
+				if (remove) {
+					removals.Add (timeout.Item1);
+				}
+			}
+
+			foreach (int item in removals)
+				timeouts.RemoveAll (t => t.Item1 == item);
+		}
+
+		public int Insert (Func<bool> timeout)
+		{
+			count++;
+			timeouts.Add (new Tuple<int, Func<bool>> (count, timeout));
+			return count;
+		}
+
+		public void Remove (int handle)
+		{
+			timeouts.RemoveAll (t => t.Item1 == handle);
+		}
+	}
+
 	public class Tweener
 	{
 		public static ISynchronizeInvoke Sync { get; set; }
+
+		static Ticker ticker;
+		static Ticker Ticker {
+			get { return ticker ?? (ticker = new Ticker ()); }
+		}
 
 		public uint Length { get; private set; }
 		public uint Rate { get; private set; }
@@ -52,7 +103,7 @@ namespace Xamarin.Motion
 		public event EventHandler Finished;
 		
 		Stopwatch runningTime;
-		Timer timer;
+		int timer;
 		
 		public Tweener (uint length, uint rate)
 		{
@@ -66,9 +117,9 @@ namespace Xamarin.Motion
 		
 		~Tweener ()
 		{
-			if (timer != null)
-				timer.Stop ();
-			timer = null;
+			if (timer != 0)
+				Ticker.Remove (timer);
+			timer = 0;
 		}
 		
 		public void Start ()
@@ -76,22 +127,20 @@ namespace Xamarin.Motion
 			Pause ();
 
 			runningTime.Start ();
-			timer = new Timer (Rate);
-			timer.SynchronizingObject = Tweener.Sync;
-			timer.Start ();
-			timer.Elapsed += (sender, e) => {
+
+			timer = Ticker.Insert (() => {
 				float rawValue = Math.Min (1.0f, runningTime.ElapsedMilliseconds / (float) Length);
 				Value = Easing (rawValue);
 				if (ValueUpdated != null)
 					ValueUpdated (this, EventArgs.Empty);
-
+				
 				if (rawValue >= 1.0f)
 				{
 					if (Loop) {
 						Value = 0.0f;
 						runningTime.Reset ();
 						runningTime.Start ();
-						return;
+						return true;
 					}
 					
 					runningTime.Stop ();
@@ -99,10 +148,11 @@ namespace Xamarin.Motion
 					if (Finished != null)
 						Finished (this, EventArgs.Empty);
 					Value = 0.0f;
-					timer.Stop ();
-					timer = null;
+					timer = 0;
+					return false;
 				}
-			};
+				return true;
+			});
 		}
 		
 		public void Stop ()
@@ -125,9 +175,9 @@ namespace Xamarin.Motion
 		{
 			runningTime.Stop ();
 			
-			if (timer != null) {
-				timer.Stop ();
-				timer = null;
+			if (timer != 0) {
+				Ticker.Remove (timer);
+				timer = 0;
 			}
 		}
 	}

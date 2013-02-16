@@ -1,15 +1,17 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.IPhone.5.0" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Xamarin.Canvas.iOS/AppDelegate.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhone" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneDeviceTarget" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Xamarin.Animation/Tweener.cs">
     <Files>
-      <File FileName="Xamarin.Canvas.iOS/Canvas.cs" Line="22" Column="31" />
-      <File FileName="Xamarin.Canvas.iOS/AppDelegate.cs" Line="256" Column="16" />
-      <File FileName="Xamarin.Canvas.iOS/ImageNodeRenderer.cs" Line="24" Column="23" />
-      <File FileName="Xamarin.Canvas.iOS/LabelNodeRenderer.cs" Line="17" Column="8" />
-      <File FileName="Xamarin.Animation/Tweener.cs" Line="80" Column="45" />
-      <File FileName="Xamarin.Canvas.iOS/NodeUIView.cs" Line="39" Column="4" />
-      <File FileName="Xamarin.Canvas/Node.cs" Line="663" Column="47" />
-      <File FileName="Xamarin.Canvas/GroupNode.cs" Line="39" Column="37" />
+      <File FileName="Xamarin.Canvas.iOS/Canvas.cs" Line="1" Column="1" />
+      <File FileName="Xamarin.Canvas.iOS/AppDelegate.cs" Line="1" Column="1" />
+      <File FileName="Xamarin.Canvas.iOS/ImageNodeRenderer.cs" Line="1" Column="1" />
+      <File FileName="Xamarin.Canvas.iOS/LabelNodeRenderer.cs" Line="1" Column="1" />
+      <File FileName="Xamarin.Animation/Tweener.cs" Line="133" Column="31" />
+      <File FileName="Xamarin.Canvas.iOS/NodeUIView.cs" Line="1" Column="1" />
+      <File FileName="Xamarin.Canvas/Node.cs" Line="1" Column="1" />
+      <File FileName="Xamarin.Canvas/GroupNode.cs" Line="1" Column="1" />
+      <File FileName="Xamarin.Animation/Animation.cs" Line="1" Column="1" />
+      <File FileName="Xamarin.Animation/AnimationExtensions.cs" Line="96" Column="4" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
