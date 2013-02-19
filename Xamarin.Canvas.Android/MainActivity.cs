@@ -32,7 +32,7 @@ namespace Xamarin.Canvas.Android
 			this.image = image;
 			this.view = new ImageView (context);
 
-			var bitmap = global::Android.Graphics.BitmapFactory.DecodeFile(image.File);
+			var bitmap = Resources.GetBitmap(image.File);
 			view.SetImageBitmap (bitmap);
 			AddView (view);
 		}
@@ -186,9 +186,7 @@ namespace Xamarin.Canvas.Android
 
 		public Size ImageSize (string file)
 		{
-			var options = new global::Android.Graphics.BitmapFactory.Options ();
-			options.InJustDecodeBounds = true;
-			var bitmap = global::Android.Graphics.BitmapFactory.DecodeFile (file, options);
+			var bitmap = Resources.GetBitmap (file);
 			return new Size (bitmap.Width, bitmap.Height);
 		}
 
