@@ -41,7 +41,7 @@ namespace Xamarin.Motion
 		public Ticker ()
 		{
 			count = 0;
-			timer = new Timer (16);
+			timer = new Timer (14);
 			timer.Elapsed += HandleElapsed;
 			timer.Start ();
 			timeouts = new List<Tuple<int, Func<bool>>> ();

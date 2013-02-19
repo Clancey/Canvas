@@ -24,7 +24,7 @@ namespace Xamarin.Canvas.iOS
 			this.node = node;
 			this.BackgroundColor = UIColor.Clear;
 			
-			node.RedrawNeeded += (o, a) => UpdateNativeWidget ();
+			node.RedrawNeeded += (o, a) => { if (o == node) UpdateNativeWidget (); };
 			node.SizeChanged += (o, a) => UpdateNativeWidget ();
 
 			singleTouchTap = CreateTapRecognizer (1, 1, r => node.Tap (new TapEventArgs (1, UIStateToNodeState (r.State))));
@@ -38,6 +38,26 @@ namespace Xamarin.Canvas.iOS
 			AddGestureRecognizer (doubleTap);
 
 			node.ChildrenReordered += (o, a) => UpdateChildrenOrder ();
+		}
+
+		public override void TouchesBegan (NSSet touches, UIEvent evt)
+		{
+			base.TouchesBegan (touches, evt);
+		}
+
+		public override void TouchesMoved (NSSet touches, UIEvent evt)
+		{
+			base.TouchesMoved (touches, evt);
+		}
+
+		public override void TouchesCancelled (NSSet touches, UIEvent evt)
+		{
+			base.TouchesCancelled (touches, evt);
+		}
+
+		public override void TouchesEnded (NSSet touches, UIEvent evt)
+		{
+			base.TouchesEnded (touches, evt);
 		}
 
 		void UpdateChildrenOrder ()
@@ -80,16 +100,35 @@ namespace Xamarin.Canvas.iOS
 			result.NumberOfTapsRequired = (uint)numTaps;
 			return result;
 		}
-		
+
+		Size lastSize;
+		CALayer layer;
+		bool inputTransparent;
 		protected virtual void UpdateNativeWidget ()
 		{
-			Frame = new RectangleF ((float)node.X, (float)node.Y, (float)node.Width, (float)node.Height);
-			Layer.AnchorPoint = new PointF ((float)node.AnchorX, (float)node.AnchorY);
+			if (layer == null) {
+				layer = Layer;
+				lastSize = new Size ();
+			}
+
+			if (inputTransparent != node.InputTransparent) {
+				UserInteractionEnabled = !node.InputTransparent;
+				inputTransparent = node.InputTransparent;
+			}
+
+			if (node.Width != lastSize.Width || node.Height != lastSize.Height) 
+				Frame = new RectangleF (0, 0, (float)node.Width, (float)node.Height);
+			lastSize = new Size (node.Width, node.Height);
+
+			layer.AnchorPoint = new PointF ((float)node.AnchorX, (float)node.AnchorY);
+			layer.Opacity = (float)node.Opacity;
 			
 			CATransform3D transform = CATransform3D.Identity;
 			transform.m34 = 1.0f / -2000f;
+			transform = transform.Translate ((float)node.X, (float)node.Y, 0);
+			transform = transform.Scale ((float)node.Scale);
 			transform = transform.Rotate ((float)node.Rotation * (float)Math.PI / 180.0f, 0.0f, 0.0f, 1.0f);
-			Layer.Transform = transform;
+			layer.Transform = transform;
 			
 			SetNeedsDisplay ();
 		}

@@ -11,7 +11,6 @@ using MonoTouch.Foundation;
 
 namespace Xamarin.Canvas.iOS
 {
-
 	public class BoxNodeRenderer : NodeUIView
 	{
 		BoxNode node;

@@ -5,7 +5,7 @@ using System.Linq;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 
-namespace Xamarin.Canvas.iOS
+namespace Xamarin.Canvas.iOS.Example
 {
 	public class Application
 	{

@@ -564,12 +564,62 @@ namespace Xamarin.Canvas
 			
 			return result;
 		}
+
+		public IContinuation<bool> Animate (uint length, Func<float, float> easing, params object[] args)
+		{
+			if (args.Length % 2 == 1)
+				throw new ArgumentException ("Passed number of arguments must be even");
+
+			CancelAnimations ();
+
+			Continuation<bool> result = new Continuation<bool> ();
+			var anim = new Animation ();
+
+			for (int i = 0; i < args.Length; i += 2) {
+				string name = args[i] as String;
+
+				if (name == null)
+					continue;
+
+				switch (name) {
+				case "x":
+					anim.Insert (0, 1, new Animation (f => X = f, (float)X, (float)(double)args[i+1]));
+					break;
+				case "y":
+					anim.Insert (0, 1, new Animation (f => Y = f, (float)Y, (float)(double)args[i+1]));
+					break;
+				case "opacity":
+					anim.Insert (0, 1, new Animation (f => Opacity = f, (float)Opacity, (float)(double)args[i+1]));
+					break;
+				case "width":
+					anim.Insert (0, 1, new Animation (f => Width = f, (float)Width, (float)(double)args[i+1]));
+					break;
+				case "height":
+					anim.Insert (0, 1, new Animation (f => Height = f, (float)Height, (float)(double)args[i+1]));
+					break;
+				case "scale":
+					anim.Insert (0, 1, new Animation (f => Scale = f, (float)Scale, (float)(double)args[i+1]));
+					break;
+				case "rotation":
+					anim.Insert (0, 1, new Animation (f => Rotation = f, (float)Rotation, (float)(double)args[i+1]));
+					break;
+				}
+			}
+
+			anim.Commit (this, "CompoundAnimation", 16, length, easing, (f, a) => {
+				result.Invoke (a);
+			});
+
+			return result;
+		}
 		
 		public void CancelAnimations ()
 		{
 			this.AbortAnimation ("MoveTo");
 			this.AbortAnimation ("RotateTo");
 			this.AbortAnimation ("ScaleTo");
+			this.AbortAnimation ("FadeTo");
+			this.AbortAnimation ("SizeTo");
 		}
 		
 		public void SetSize (double width, double height)

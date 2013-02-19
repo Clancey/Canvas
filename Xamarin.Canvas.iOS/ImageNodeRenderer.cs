@@ -11,23 +11,28 @@ using MonoTouch.Foundation;
 
 namespace Xamarin.Canvas.iOS
 {
-	public class ImageNodeRenderer: NodeUIView
+	public class ButtonNodeRenderer : NativeViewRenderer
+	{
+		ButtonNode node;
+
+		public ButtonNodeRenderer (ButtonNode node)
+			: base (node)
+		{
+			this.node = node;
+			SetView (new UIButton (UIButtonType.RoundedRect));
+		}
+	}
+
+
+	public class ImageNodeRenderer: NativeViewRenderer
 	{
 		ImageNode node;
-		UIImageView image;
 		
 		public ImageNodeRenderer (ImageNode node)
 			: base (node)
 		{
 			this.node = node;
-			image = new UIImageView (new UIImage (node.File));
-			AddSubview (image);
-		}
-		
-		public override void LayoutSubviews ()
-		{
-			base.LayoutSubviews ();
-			image.Frame = new RectangleF (0, 0, (float) node.Width, (float) node.Height);
+			SetView (new UIImageView (new UIImage (node.File)));
 		}
 	}
 	

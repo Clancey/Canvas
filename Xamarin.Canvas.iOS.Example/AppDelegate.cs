@@ -5,7 +5,7 @@ using System.Linq;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 
-namespace Xamarin.Canvas.iOS
+namespace Xamarin.Canvas.iOS.Example
 {
 	// The UIApplicationDelegate for the application. This class is responsible for launching the 
 	// User Interface of the application, as well as listening (and optionally responding) to 
@@ -15,7 +15,7 @@ namespace Xamarin.Canvas.iOS
 	{
 		// class-level declarations
 		UIWindow window;
-
+		
 		//
 		// This method is invoked when the application has loaded and is ready to run. In this 
 		// method you should instantiate the window, load the UI into it and then make the window
@@ -37,59 +37,61 @@ namespace Xamarin.Canvas.iOS
 			return true;
 		}
 	}
-
+	
 	public class PhotoAlbum : GroupNode
 	{
 		public PhotoAlbum ()
 		{
-			ImageStack stack = new ImageStack (new [] {
-				"cover1.jpg",
-				"cover2.jpg",
+//			ImageStack stack = new ImageStack (new [] {
+//				"cover1.jpg",
+//				"cover2.jpg",
+//				"cover3.jpg",
+//				"cover4.jpg",
+//				"cover5.jpg"
+//			});
+//			Add (stack);
+//			
+//			stack = new ImageStack (new [] {
+//				"cover6.jpg",
+//				"cover7.jpg",
+//				"cover8.jpg",
+//				"cover9.jpg",
+//				"cover10.jpg"
+//			});
+//			Add (stack);
+//			
+//			stack = new ImageStack (new [] {
+//				"cover10.jpg",
+//				"cover5.jpg",
+//				"cover3.jpg",
+//				"cover2.jpg",
+//				"cover7.jpg"
+//			});
+//			Add (stack);
+//			
+//			stack = new ImageStack (new [] {
+//				"cover10.jpg",
+//				"cover5.jpg",
+//				"cover3.jpg",
+//				"cover2.jpg",
+//				"cover7.jpg"
+//			});
+//			Add (stack);
+			
+			var stack = new ImageStack (new [] {
+				"cover10.jpg",
+				"cover5.jpg",
 				"cover3.jpg",
+				"cover2.jpg",
+				"cover1.jpg",
+				"cover9.jpg",
 				"cover4.jpg",
-				"cover5.jpg"
-			});
-			Add (stack);
-
-			stack = new ImageStack (new [] {
-				"cover6.jpg",
-				"cover7.jpg",
 				"cover8.jpg",
-				"cover9.jpg",
-				"cover10.jpg"
-			});
-			Add (stack);
-
-			stack = new ImageStack (new [] {
-				"cover10.jpg",
-				"cover5.jpg",
-				"cover3.jpg",
-				"cover2.jpg",
+				"cover6.jpg",
 				"cover7.jpg"
 			});
 			Add (stack);
-
-			stack = new ImageStack (new [] {
-				"cover10.jpg",
-				"cover5.jpg",
-				"cover3.jpg",
-				"cover2.jpg",
-				"cover7.jpg"
-			});
-			Add (stack);
-
-			stack = new ImageStack (new [] {
-				"cover10.jpg",
-				"cover5.jpg",
-				"cover3.jpg",
-				"cover2.jpg",
-				"cover1.jpg",
-				"cover9.jpg",
-				"cover4.jpg",
-				"cover8.jpg"
-			});
-			Add (stack);
-
+			
 			stack = new ImageStack (new [] {
 				"cover10.jpg",
 				"cover5.jpg",
@@ -98,11 +100,12 @@ namespace Xamarin.Canvas.iOS
 			});
 			Add (stack);
 		}
-
+		
 		protected override void OnSizeAllocated (double width, double height)
 		{
-			int columns = (int) width / 100;
-			int spacing = ((int)width % 100) / (columns + 1);
+			int renderSize = (int) Children.First ().PreferedWidth;
+			int columns = (int) width / renderSize;
+			int spacing = ((int)width % renderSize) / (columns + 1);
 			
 			int col = 0;
 			
@@ -116,18 +119,18 @@ namespace Xamarin.Canvas.iOS
 				stack.MoveTo (position.X, position.Y);
 				stack.SetSize (stack.PreferedWidth, stack.PreferedHeight);
 				
-				x += 100 + spacing;
+				x += renderSize + spacing;
 				col++;
 				
 				if (col >= columns) {
 					x = spacing;
 					col = 0;
-					y += 100 + spacing;
+					y += renderSize + spacing;
 				}
 			}
 		}
 	}
-
+	
 	public class ImageStack : GroupNode
 	{
 		bool spread;
@@ -142,19 +145,19 @@ namespace Xamarin.Canvas.iOS
 				UpdatePreferedSize ();
 			}
 		}
-
+		
 		public Point HomeLocation { get; set; }
-
+		
 		public ImageStack (IEnumerable<string> files)
 		{
 			foreach (string file in files) {
 				var image = new ImageNode (file);
 				Add (image);
 			}
-
+			
 			UpdatePreferedSize ();
 		}
-
+		
 		void UpdatePreferedSize ()
 		{
 			if (spread) {
@@ -166,40 +169,41 @@ namespace Xamarin.Canvas.iOS
 				MoveTo (HomeLocation.X, HomeLocation.Y, 350, Motion.Easing.CubicInOut);
 			}
 		}
-
+		
 		public override void Add (Node node)
 		{
 			node.ActivatedEvent += HandleChildActivated;
 			base.Add (node);
 		}
-
+		
 		void HandleChildActivated (object sender, EventArgs e)
 		{
 			Spread = !Spread;
 		}
-
+		
 		protected override void OnSizeAllocated (double width, double height)
 		{
-			if (spread && width > 100) {
-				int columns = (int) width / 100;
-				int spacing = ((int)width % 100) / (columns + 1);
-
+			int imageSize = (int)Math.Max (100, width / 3.5);
+			if (spread && width > imageSize) {
+				int columns = (int) width / imageSize;
+				int spacing = ((int)width % imageSize) / (columns + 1);
+				
 				int col = 0;
-
+				
 				int x = spacing;
 				int y = spacing;
-
+				
 				foreach (var child in Children) {
 					var position = new Point (x, y);
-					AllocateChild (child, position, 100, 0);
-
-					x += 100 + spacing;
+					AllocateChild (child, position, imageSize, 0);
+					
+					x += imageSize + spacing;
 					col++;
-
+					
 					if (col >= columns) {
 						x = spacing;
 						col = 0;
-						y += 100 + spacing;
+						y += imageSize + spacing;
 					}
 				}
 			} else {
@@ -212,19 +216,18 @@ namespace Xamarin.Canvas.iOS
 				}
 			}
 		}
-
+		
 		void AllocateChild (Node node, Point position, double size, double rotation)
 		{
-			node.MoveTo (position.X, position.Y, 350, Motion.Easing.CubicInOut);
-			node.SizeTo (size, size, 350, Motion.Easing.CubicInOut);
-			node.RotateTo (rotation, 350, Motion.Easing.CubicInOut);
-		}
-
-		protected override void OnChildPreferedSizeChanged (object sender, EventArgs e)
-		{
+			node.Animate (350, Motion.Easing.CubicInOut, 
+			              "x", position.X,
+			              "y", position.Y,
+			              "width", size,
+			              "height", size,
+			              "rotation", rotation);
 		}
 	}
-
+	
 	public class RootViewController : UIViewController
 	{
 		Canvas canvas;
@@ -232,22 +235,25 @@ namespace Xamarin.Canvas.iOS
 		public override void LoadView ()
 		{
 			canvas = new Canvas ();
-			System.Threading.ThreadPool.SetMinThreads (50, 50);
-
+			canvas.SetBackground (new Color (1, 1, 1));
+			
 			album = new PhotoAlbum ();
 			canvas.Root.Add (album);
+			
+			ButtonNode button = new ButtonNode (new LabelNode ("FooBar"));
+			canvas.Root.Add (button);
 		}
-
+		
 		public override void ViewDidLoad ()
 		{
 			base.ViewDidLoad ();
 			View = canvas;
 		}
-
+		
 		public override void ViewWillLayoutSubviews ()
 		{
 			base.ViewWillLayoutSubviews ();
-
+			
 			album.WidthRequest = View.Frame.Width;
 			album.HeightRequest = View.Frame.Height;
 		}

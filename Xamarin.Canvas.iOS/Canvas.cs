@@ -45,6 +45,8 @@ namespace Xamarin.Canvas.iOS
 				return new PolygonNodeRenderer (node as PolygonNode);
 			if (node is ImageNode)
 				return new ImageNodeRenderer (node as ImageNode);
+			if (node is ButtonNode)
+				return new ButtonNodeRenderer (node as ButtonNode);
 
 			return new NodeUIView (node);
 		}
