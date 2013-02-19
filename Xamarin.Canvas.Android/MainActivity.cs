@@ -7,6 +7,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Android.OS;
+using System.ComponentModel;
 
 namespace Xamarin.Canvas.Android
 {
@@ -41,7 +42,6 @@ namespace Xamarin.Canvas.Android
 		{
 			base.OnLayout (changed, l, t, r, b);
 			view.Layout (0, 0, r - l, b - t);
-			Console.WriteLine ("Layout Image: {0} {1} {2} {3}", view.GetX (), view.GetY (), view.Width, view.Height);
 		}
 	}
 
@@ -71,10 +71,17 @@ namespace Xamarin.Canvas.Android
 			SetBackgroundColor (new Color (0, 0, 0, 0).ToAndroid ());
 			this.node = node;
 			node.RedrawNeeded += (sender, e) => {
-				if (sender == this)
+				if (sender == node)
 					UpdateNativeView (); 
 			};
 			node.SizeChanged += (sender, e) => UpdateNativeView ();
+
+			Click += HandleClick;
+		}
+
+		void HandleClick (object sender, EventArgs e)
+		{
+			node.Tap (new TapEventArgs (1, GestureState.Ended));
 		}
 
 		protected virtual void UpdateNativeView ()
@@ -204,15 +211,18 @@ namespace Xamarin.Canvas.Android
 
 		public bool Supports3D { get { return true; } }
 		#endregion
+
+
 	}
 
 	[Activity (Label = "Xamarin.Canvas.Android", MainLauncher = true)]
-	public class Activity1 : Activity
+	public class Activity1 : Activity, ISynchronizeInvoke
 	{
 		Canvas canvas;
 
 		protected override void OnCreate (Bundle bundle)
 		{
+			Xamarin.Motion.Tweener.Sync = this;
 			base.OnCreate (bundle);
 			canvas = new Canvas (this.BaseContext);
 			canvas.SetBackground (new Color (0, 0, 1));
@@ -227,6 +237,8 @@ namespace Xamarin.Canvas.Android
 			image.Y = 150;
 			canvas.Root.Add (image);
 
+			image.ActivatedEvent += (sender, e) => image.RelRotateTo (50);
+
 			// Set our view from the "main" layout resource
 			LinearLayout layout = new LinearLayout (BaseContext);
 			SetContentView (layout);
@@ -234,6 +246,31 @@ namespace Xamarin.Canvas.Android
 			layout.AddView (canvas);
 
 		}
+
+		#region ISynchronizeInvoke implementation
+		
+		IAsyncResult ISynchronizeInvoke.BeginInvoke (Delegate method, object[] args)
+		{
+			RunOnUiThread (() => method.DynamicInvoke (args));
+			return null;
+		}
+		
+		object ISynchronizeInvoke.EndInvoke (IAsyncResult result)
+		{
+			return null;
+		}
+		
+		object ISynchronizeInvoke.Invoke (Delegate method, object[] args)
+		{
+			RunOnUiThread (() => method.DynamicInvoke (args));
+			return null;
+		}
+		
+		bool ISynchronizeInvoke.InvokeRequired {
+			get { return true; }
+		}
+		
+		#endregion
 	}
 }
 

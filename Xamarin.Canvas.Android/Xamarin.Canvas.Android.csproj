@@ -59,21 +59,21 @@
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />
-    <None Include="Resources\cover1.jpg" />
-    <None Include="Resources\cover2.jpg" />
-    <None Include="Resources\cover3.jpg" />
-    <None Include="Resources\cover4.jpg" />
-    <None Include="Resources\cover5.jpg" />
-    <None Include="Resources\cover6.jpg" />
-    <None Include="Resources\cover7.jpg" />
-    <None Include="Resources\cover8.jpg" />
-    <None Include="Resources\cover9.jpg" />
-    <None Include="Resources\cover10.jpg" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\Main.axml" />
     <AndroidResource Include="Resources\values\Strings.xml" />
     <AndroidResource Include="Resources\drawable\Icon.png" />
+    <AndroidResource Include="Resources\drawable\cover1.jpg" />
+    <AndroidResource Include="Resources\drawable\cover10.jpg" />
+    <AndroidResource Include="Resources\drawable\cover2.jpg" />
+    <AndroidResource Include="Resources\drawable\cover3.jpg" />
+    <AndroidResource Include="Resources\drawable\cover4.jpg" />
+    <AndroidResource Include="Resources\drawable\cover5.jpg" />
+    <AndroidResource Include="Resources\drawable\cover6.jpg" />
+    <AndroidResource Include="Resources\drawable\cover7.jpg" />
+    <AndroidResource Include="Resources\drawable\cover8.jpg" />
+    <AndroidResource Include="Resources\drawable\cover9.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
 </Project>

@@ -110,6 +110,34 @@ namespace Xamarin.Canvas
 				action (val);
 		}
 	}
+
+	internal class NodeDataStore
+	{
+		public double X;
+		public double Y;
+		public double Width;
+		public double Height;
+		public double Scale;
+		public double Rotation;
+		public double RotationX;
+		public double RotationY;
+		public double Opacity;
+
+		public virtual Animation Tween (NodeDataStore target)
+		{
+			var anim = new Animation ();
+			if (X != target.X) anim.Insert (0, 1, new Animation (f => X = f, (float)X, (float)target.X));
+			if (Y != target.Y) anim.Insert (0, 1, new Animation (f => Y = f, (float)Y, (float)target.Y));
+			if (Width != target.Width) anim.Insert (0, 1, new Animation (f => Width = f, (float)Width, (float)target.Width));
+			if (Height != target.Height) anim.Insert (0, 1, new Animation (f => Height = f, (float)Height, (float)target.Height));
+			if (Scale != target.Scale) anim.Insert (0, 1, new Animation (f => Scale = f, (float)Scale, (float)target.Scale));
+			if (Rotation != target.Rotation) anim.Insert (0, 1, new Animation (f => Rotation = f, (float)Rotation, (float)target.Rotation));
+			if (RotationX != target.RotationX) anim.Insert (0, 1, new Animation (f => RotationX = f, (float)RotationX, (float)target.RotationX));
+			if (RotationY != target.RotationY) anim.Insert (0, 1, new Animation (f => RotationY = f, (float)RotationY, (float)target.RotationY));
+			if (Opacity != target.Opacity) anim.Insert (0, 1, new Animation (f => Opacity = f, (float)Opacity, (float)target.Opacity));
+			return anim;
+		}
+	}
 	
 	public class Node : IComparable<Node>, Animatable
 	{
@@ -173,6 +201,26 @@ namespace Xamarin.Canvas
 			}
 			set {
 				rotation = value;
+			}
+		}
+
+		double rotationX;
+		public double RotationX {
+			get {
+				return rotationX;
+			}
+			set {
+				rotationX = value;
+			}
+		}
+
+		double rotationY;
+		public double RotationY {
+			get {
+				return rotationY;
+			}
+			set {
+				rotationY = value;
 			}
 		}
 		
@@ -602,6 +650,12 @@ namespace Xamarin.Canvas
 					break;
 				case "rotation":
 					anim.Insert (0, 1, new Animation (f => Rotation = f, (float)Rotation, (float)(double)args[i+1]));
+					break;
+				case "rotationx":
+					anim.Insert (0, 1, new Animation (f => RotationX = f, (float)RotationX, (float)(double)args[i+1]));
+					break;
+				case "rotationy":
+					anim.Insert (0, 1, new Animation (f => RotationY = f, (float)RotationY, (float)(double)args[i+1]));
 					break;
 				}
 			}

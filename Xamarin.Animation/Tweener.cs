@@ -49,7 +49,8 @@ namespace Xamarin.Motion
 
 		void HandleElapsed (object sender, ElapsedEventArgs e)
 		{
-			Tweener.Sync.Invoke (new Action (() => SendSignals ()), null);
+			if (timeouts.Count > 0)
+				Tweener.Sync.Invoke (new Action (() => SendSignals ()), null);
 		}
 
 		void SendSignals ()

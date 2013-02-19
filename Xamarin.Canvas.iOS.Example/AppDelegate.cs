@@ -152,6 +152,7 @@ namespace Xamarin.Canvas.iOS.Example
 		{
 			foreach (string file in files) {
 				var image = new ImageNode (file);
+				image.IsOpaque = true;
 				Add (image);
 			}
 			

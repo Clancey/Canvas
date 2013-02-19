@@ -13,6 +13,8 @@ namespace Xamarin.Canvas
 
 		public double XAlign { get; set; }
 		public double YAlign { get; set; }
+
+		public bool IsOpaque { get; set; }
 		
 		public ImageNode (string file)
 		{
