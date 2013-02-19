@@ -56,3 +56,5 @@ Xamarin.Canvas.iOS/bin/iPhoneSimulator/Debug/XamarinCanvasiOS.app/cover2.jpg
 Xamarin.Canvas.iOS/bin/iPhoneSimulator/Debug/XamarinCanvasiOS.app/cover8.jpg
 
 Xamarin.Canvas.iOS/bin/iPhoneSimulator/Debug/XamarinCanvasiOS.app/cover9.jpg
+
+*.userprefs
