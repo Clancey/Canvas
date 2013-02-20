@@ -14,15 +14,32 @@ namespace Xamarin.Canvas
 		ReadOnlyCollection<Node> roChildren;
 		
 		public override ReadOnlyCollection<Node> Children {
-			get {
-				return roChildren;
-			}
+			get { return roChildren; }
 		}
 		
 		public GroupNode ()
 		{
 			children = new List<Node> ();
 			roChildren = children.AsReadOnly ();
+		}
+
+		public void SortChildren (List<Node> compare)
+		{
+			bool cont = false;
+			for (int i = 0; i < children.Count; i++) {
+				if (compare[i] != children[i]) {
+					cont = true;
+					break;
+				}
+			}
+
+			if (!cont)
+				return;
+
+			children = children.OrderBy (n => compare.IndexOf (n)).ToList ();
+			roChildren = children.AsReadOnly ();
+
+			OnChildrenReordered ();
 		}
 
 		public void RaiseChild (Node node)

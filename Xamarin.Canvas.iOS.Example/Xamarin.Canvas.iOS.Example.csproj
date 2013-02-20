@@ -89,6 +89,9 @@
     <Reference Include="Xamarin.Motion">
       <HintPath>..\Xamarin.Animation\bin\Debug\Xamarin.Motion.dll</HintPath>
     </Reference>
+    <Reference Include="Xamarin.Canvas.Controls">
+      <HintPath>..\Xamarin.Canvas.Controls\bin\Debug\Xamarin.Canvas.Controls.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />

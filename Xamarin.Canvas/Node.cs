@@ -253,12 +253,32 @@ namespace Xamarin.Canvas
 		/// <summary>
 		/// User set width override for an element
 		/// </summary>
-		public double WidthRequest { get; set; }
+		double widthRequest;
+		public double WidthRequest {
+			get {
+				return widthRequest;
+			}
+			set {
+				widthRequest = value;
+				if (PreferedSizeChanged != null)
+					PreferedSizeChanged (this, EventArgs.Empty);
+			}
+		}
 		
 		/// <summary>
 		/// User set height override for an element
 		/// </summary>
-		public double HeightRequest { get; set; }
+		double heightRequest;
+		public double HeightRequest {
+			get {
+				return heightRequest;
+			}
+			set {
+				heightRequest = value;
+				if (PreferedSizeChanged != null)
+					PreferedSizeChanged (this, EventArgs.Empty);
+			}
+		}
 		
 		/// <summary>
 		/// Points prefered allocation accounting for user set width request

@@ -25,8 +25,24 @@ namespace Xamarin.Canvas.Android
 					UpdateNativeView (); 
 			};
 			node.SizeChanged += (sender, e) => UpdateNativeView ();
+			node.ChildrenReordered += HandleChildrenReordered;
 
 			Click += HandleClick;
+		}
+
+		void HandleChildrenReordered (object sender, EventArgs e)
+		{
+			ChildrenDrawingOrderEnabled = true;
+			Invalidate ();
+		}
+
+		protected override int GetChildDrawingOrder (int childCount, int i)
+		{
+			if (node.Children == null)
+				return i;
+
+			var result = IndexOfChild (node.Children [i].Renderer as NodeView);
+			return result;
 		}
 
 		void HandleClick (object sender, EventArgs e)
@@ -40,6 +56,8 @@ namespace Xamarin.Canvas.Android
 			SetY ((float)node.Y);
 			Alpha = (float)node.Opacity;
 			Rotation = (float)node.Rotation;
+			RotationX = (float)node.RotationX;
+			RotationY = (float)node.RotationY;
 			ScaleX = (float)node.Scale;
 			ScaleY = (float)node.Scale;
 		}
@@ -48,6 +66,7 @@ namespace Xamarin.Canvas.Android
 		{
 			UpdateNativeView ();
 			Layout ((int)node.X, (int)node.Y, (int)(node.X + node.Width), (int)(node.Y + node.Height));
+			OnLayout (true, Left, Top, Right, Bottom);
 		}
 
 		protected override void OnLayout (bool changed, int l, int t, int r, int b)

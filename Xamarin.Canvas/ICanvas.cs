@@ -17,6 +17,8 @@ namespace Xamarin.Canvas
 		void SetCursor (CursorType type);
 		void FocusNode (Node node);
 		void ShowMenu (Node node, int rootX, int rootY, uint button);
+
+		void Destroy ();
 	}
 }
 

@@ -11,22 +11,25 @@ using System.ComponentModel;
 
 namespace Xamarin.Canvas.Android
 {
-
-	public class ImageNodeView : NodeView
+	public class LabelNodeView : NodeView
 	{
-		ImageNode image;
-		ImageView view;
+		TextView view;
+		LabelNode label;
 
-		public ImageNodeView (Context context, ImageNode image)
-			: base (context, image)
+		public LabelNodeView (Context context, LabelNode label)
+			: base (context, label)
 		{
-			this.image = image;
-			this.view = new ImageView (context);
-
-			var bitmap = Resources.GetBitmap(image.File);
-			view.SetImageBitmap (bitmap);
+			this.label = label;
+			this.view = new TextView (context);
 			AddView (view);
-			bitmap.Dispose ();
+		}
+
+		protected override void UpdateNativeView ()
+		{
+			view.Text = label.Text;
+			view.SetTextColor (label.Color.ToAndroid ());
+
+			base.UpdateNativeView ();
 		}
 
 		protected override void OnLayout (bool changed, int l, int t, int r, int b)

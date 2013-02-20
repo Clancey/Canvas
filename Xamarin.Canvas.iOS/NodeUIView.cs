@@ -101,14 +101,12 @@ namespace Xamarin.Canvas.iOS
 			return result;
 		}
 
-		Size lastSize;
 		CALayer layer;
 		bool inputTransparent;
 		protected virtual void UpdateNativeWidget ()
 		{
 			if (layer == null) {
 				layer = Layer;
-				lastSize = new Size ();
 			}
 
 			if (inputTransparent != node.InputTransparent) {
@@ -116,18 +114,16 @@ namespace Xamarin.Canvas.iOS
 				inputTransparent = node.InputTransparent;
 			}
 
-			if (node.Width != lastSize.Width || node.Height != lastSize.Height) 
-				Frame = new RectangleF (0, 0, (float)node.Width, (float)node.Height);
-			lastSize = new Size (node.Width, node.Height);
-
+			Frame = new RectangleF ((float)node.X, (float)node.Y, (float)node.Width, (float)node.Height);
 			layer.AnchorPoint = new PointF ((float)node.AnchorX, (float)node.AnchorY);
 			layer.Opacity = (float)node.Opacity;
 			
 			CATransform3D transform = CATransform3D.Identity;
-			transform.m34 = 1.0f / -2000f;
-			transform = transform.Translate ((float)node.X, (float)node.Y, 0);
 			transform = transform.Scale ((float)node.Scale);
+			transform.m34 = 1.0f / -400f;
 			transform = transform.Rotate ((float)node.Rotation * (float)Math.PI / 180.0f, 0.0f, 0.0f, 1.0f);
+			transform = transform.Rotate ((float)node.RotationX * (float)Math.PI / 180.0f, 1.0f, 0.0f, 0.0f);
+			transform = transform.Rotate ((float)node.RotationY * (float)Math.PI / 180.0f, 0.0f, 1.0f, 0.0f);
 			layer.Transform = transform;
 			
 			SetNeedsDisplay ();

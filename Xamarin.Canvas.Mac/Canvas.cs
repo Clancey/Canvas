@@ -72,6 +72,11 @@ namespace Xamarin.Canvas.Mac
 			}
 		}
 
+		public void Destroy ()
+		{
+
+		}
+
 		#endregion
 
 		#region ICanvasEngine implementation

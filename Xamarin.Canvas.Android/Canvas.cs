@@ -30,6 +30,8 @@ namespace Xamarin.Canvas.Android
 				return new BoxNodeView (this.Context, node as BoxNode);
 			if (node is ImageNode)
 				return new ImageNodeView (this.Context, node as ImageNode);
+			if (node is LabelNode)
+				return new LabelNodeView (this.Context, node as LabelNode);
 			return new NodeView (this.Context, node);
 		}
 
@@ -47,12 +49,21 @@ namespace Xamarin.Canvas.Android
 				}
 			}
 			
-			if (node.Children != null)
-				foreach (Node child in node.Children)
+			if (node.Children != null) {
+				foreach (Node child in node.Children) {
 					AddChild (child);
+				}
+			}
 		}
 
 		#region ICanvas implementation
+		public void Destroy ()
+		{
+			Console.WriteLine ("Destroy Children");
+			root.Renderer = null;
+			root.AllChildren ().ForEach (n => n.Renderer = null);
+		}
+
 		public void SetCursor (CursorType type)
 		{
 		}
@@ -86,10 +97,10 @@ namespace Xamarin.Canvas.Android
 
 		public Size TextExtents (string text, TextOptions options)
 		{
-			var paint = new global::Android.Graphics.Paint ();
-			global::Android.Graphics.Rect rect = new global::Android.Graphics.Rect ();
-			paint.GetTextBounds (text, 0, text.Length, rect);
-			return new Size (rect.Width (), rect.Height ());
+			TextView view = new TextView (Context);
+			view.Text = text;
+			view.Measure (0, 0);
+			return new Size (view.MeasuredWidth, view.MeasuredHeight);
 		}
 
 		public Size ImageSize (string file)
@@ -112,7 +123,6 @@ namespace Xamarin.Canvas.Android
 
 		public bool Supports3D { get { return true; } }
 		#endregion
-
 	}
 	
 }

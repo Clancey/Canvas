@@ -9,38 +9,53 @@ using Android.Widget;
 using Android.OS;
 using System.ComponentModel;
 
+using global::Android.Content.PM;
+
 namespace Xamarin.Canvas.Android
 {
-	[Activity (Label = "Xamarin.Canvas.Android", MainLauncher = true)]
+	[Activity (Label = "Xamarin.Canvas.Android", MainLauncher = true, HardwareAccelerated = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
 	public class Activity1 : Activity, ISynchronizeInvoke
 	{
 		Canvas canvas;
 
 		protected override void OnCreate (Bundle bundle)
 		{
-			Xamarin.Motion.Tweener.Sync = this;
 			base.OnCreate (bundle);
+
+			Xamarin.Motion.Tweener.Sync = this;
 			canvas = new Canvas (this.BaseContext);
 			canvas.SetBackground (new Color (0, 0, 1));
 
-			BoxNode box = new BoxNode (new Color (1, 0, 0), 100, 100);
-			box.X = 50;
-			box.Y = 50;
-			canvas.Root.Add (box);
+			Controls.Coverflow coverflow = new Xamarin.Canvas.Controls.Coverflow (new [] {
+				"cover1.jpg", "cover2.jpg", "cover3.jpg", "cover4.jpg", "cover5.jpg", "cover6.jpg", 
+				"cover7.jpg", "cover8.jpg", "cover9.jpg", "cover10.jpg", "cover1.jpg", "cover2.jpg", "cover3.jpg",
+				"cover4.jpg", "cover5.jpg", "cover6.jpg", "cover7.jpg", "cover8.jpg", "cover9.jpg", "cover10.jpg",
+			});
 
-			ImageNode image = new ImageNode ("cover1.jpg");
-			image.X = 150;
-			image.Y = 150;
-			canvas.Root.Add (image);
+			canvas.Root.Add (coverflow);
+			canvas.Root.SizeChanged += (sender, e) => {
+				coverflow.WidthRequest = canvas.Root.Width;
+				coverflow.HeightRequest = canvas.Root.Height;
+			};
 
-			image.ActivatedEvent += (sender, e) => image.RelRotateTo (50);
 
-			// Set our view from the "main" layout resource
 			LinearLayout layout = new LinearLayout (BaseContext);
 			SetContentView (layout);
 
 			layout.AddView (canvas);
 
+		}
+
+		public override void OnConfigurationChanged (global::Android.Content.Res.Configuration newConfig)
+		{
+			Console.WriteLine ("New Configuration");
+			base.OnConfigurationChanged (newConfig);
+		}
+
+		protected override void OnDestroy ()
+		{
+			canvas.Destroy ();
+			base.OnDestroy ();
 		}
 
 		#region ISynchronizeInvoke implementation

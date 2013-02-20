@@ -49,6 +49,9 @@
     <Reference Include="Xamarin.Motion">
       <HintPath>..\Xamarin.Animation\bin\Debug\Xamarin.Motion.dll</HintPath>
     </Reference>
+    <Reference Include="Xamarin.Canvas.Controls">
+      <HintPath>..\Xamarin.Canvas.Controls\bin\Debug\Xamarin.Canvas.Controls.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainActivity.cs" />
@@ -60,6 +63,7 @@
     <Compile Include="ImageNodeView.cs" />
     <Compile Include="BoxNodeView.cs" />
     <Compile Include="ColorExtensions.cs" />
+    <Compile Include="LabelNodeView.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

@@ -76,6 +76,11 @@ namespace Xamarin.Canvas.iOS
 		}
 
 		#region ICanvas implementation
+		public void Destroy ()
+		{
+			
+		}
+
 		public void SetCursor (CursorType type)
 		{
 			// no cursors on iOS

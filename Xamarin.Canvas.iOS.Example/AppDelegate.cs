@@ -41,43 +41,7 @@ namespace Xamarin.Canvas.iOS.Example
 	public class PhotoAlbum : GroupNode
 	{
 		public PhotoAlbum ()
-		{
-//			ImageStack stack = new ImageStack (new [] {
-//				"cover1.jpg",
-//				"cover2.jpg",
-//				"cover3.jpg",
-//				"cover4.jpg",
-//				"cover5.jpg"
-//			});
-//			Add (stack);
-//			
-//			stack = new ImageStack (new [] {
-//				"cover6.jpg",
-//				"cover7.jpg",
-//				"cover8.jpg",
-//				"cover9.jpg",
-//				"cover10.jpg"
-//			});
-//			Add (stack);
-//			
-//			stack = new ImageStack (new [] {
-//				"cover10.jpg",
-//				"cover5.jpg",
-//				"cover3.jpg",
-//				"cover2.jpg",
-//				"cover7.jpg"
-//			});
-//			Add (stack);
-//			
-//			stack = new ImageStack (new [] {
-//				"cover10.jpg",
-//				"cover5.jpg",
-//				"cover3.jpg",
-//				"cover2.jpg",
-//				"cover7.jpg"
-//			});
-//			Add (stack);
-			
+		{	
 			var stack = new ImageStack (new [] {
 				"cover10.jpg",
 				"cover5.jpg",
@@ -232,31 +196,28 @@ namespace Xamarin.Canvas.iOS.Example
 	public class RootViewController : UIViewController
 	{
 		Canvas canvas;
-		PhotoAlbum album;
 		public override void LoadView ()
 		{
 			canvas = new Canvas ();
 			canvas.SetBackground (new Color (1, 1, 1));
+
+			Controls.Coverflow coverflow = new Xamarin.Canvas.Controls.Coverflow (new [] {
+				"cover1.jpg", "cover2.jpg", "cover3.jpg", "cover4.jpg", "cover5.jpg", "cover6.jpg", 
+				"cover7.jpg", "cover8.jpg", "cover9.jpg", "cover10.jpg", "cover1.jpg", "cover2.jpg", "cover3.jpg",
+				"cover4.jpg", "cover5.jpg", "cover6.jpg", "cover7.jpg", "cover8.jpg", "cover9.jpg", "cover10.jpg",
+			});
 			
-			album = new PhotoAlbum ();
-			canvas.Root.Add (album);
-			
-			ButtonNode button = new ButtonNode (new LabelNode ("FooBar"));
-			canvas.Root.Add (button);
+			canvas.Root.Add (coverflow);
+			canvas.Root.SizeChanged += (sender, e) => {
+				coverflow.WidthRequest = canvas.Root.Width;
+				coverflow.HeightRequest = canvas.Root.Height;
+			};
 		}
 		
 		public override void ViewDidLoad ()
 		{
 			base.ViewDidLoad ();
 			View = canvas;
-		}
-		
-		public override void ViewWillLayoutSubviews ()
-		{
-			base.ViewWillLayoutSubviews ();
-			
-			album.WidthRequest = View.Frame.Width;
-			album.HeightRequest = View.Frame.Height;
 		}
 	}
 }
