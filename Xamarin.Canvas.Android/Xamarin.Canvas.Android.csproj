@@ -55,6 +55,11 @@
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Extension.cs" />
+    <Compile Include="Canvas.cs" />
+    <Compile Include="NodeView.cs" />
+    <Compile Include="ImageNodeView.cs" />
+    <Compile Include="BoxNodeView.cs" />
+    <Compile Include="ColorExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
