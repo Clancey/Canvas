@@ -212,12 +212,6 @@ namespace Xamarin.Canvas.iOS.Example
 			canvas.Root.SizeChanged += (sender, e) => {
 				coverflow.WidthRequest = canvas.Root.Width;
 				coverflow.HeightRequest = canvas.Root.Height;
-
-				Console.WriteLine (canvas.Frame);
-			};
-
-			coverflow.SizeChanged += (sender, e) => {
-				Console.WriteLine ("Coverflow size: {0} {1}", coverflow.Width, coverflow.Height);
 			};
 
 		}

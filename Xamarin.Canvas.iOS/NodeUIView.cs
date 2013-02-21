@@ -29,13 +29,29 @@ namespace Xamarin.Canvas.iOS
 			get { return velocity; }
 		}
 
-		public NodeTouchEvent (NodeUIView sender, NSSet touches, UIEvent evt, TouchType type)
+		public NodeTouchEvent (NodeUIView parent, UIPanGestureRecognizer pan)
 		{
-			this.type = type;
+			switch (pan.State) {
+			case UIGestureRecognizerState.Began:
+				type = TouchType.Down;
+				break;
+			case UIGestureRecognizerState.Changed:
+				type = TouchType.Move;
+				break;
+			case UIGestureRecognizerState.Ended:
+				type = TouchType.Up;
+				break;
+			case UIGestureRecognizerState.Possible:
+			case UIGestureRecognizerState.Cancelled:
+			case UIGestureRecognizerState.Failed:
+				break;
+			}
 
-			UITouch touch = touches.AnyObject as UITouch;
-			var touchLocation = touch.LocationInView (sender);
-			point = new Point (touchLocation.X, touchLocation.Y);
+			var p = pan.LocationInView (parent);
+			point = new Point (p.X, p.Y);
+
+			var velo = pan.VelocityInView (parent);
+			velocity = new Vec2 (velo.X / 1000, velo.Y / 1000);
 		}
 	}
 
@@ -50,48 +66,47 @@ namespace Xamarin.Canvas.iOS
 		public NodeUIView (Node node)
 		{
 			this.node = node;
-			this.BackgroundColor = new Color (0.2, 0.4, 0.6).ToUIColor ();
+			this.BackgroundColor = UIColor.Clear;
 			
-			node.RedrawNeeded += (o, a) => { if (o == node) UpdateNativeWidget (); };
+			node.RedrawNeeded += (o, a) => {
+				if (o == node)
+					UpdateNativeWidget (); };
 			node.SizeChanged += (o, a) => UpdateNativeWidget ();
 
 			singleTouchTap = CreateTapRecognizer (1, 1, r => node.Tap (new TapEventArgs (1, UIStateToNodeState (r.State))));
 			doubleTouchTap = CreateTapRecognizer (2, 1, r => node.Tap (new TapEventArgs (2, UIStateToNodeState (r.State))));
 			tripleTouchTap = CreateTapRecognizer (3, 1, r => node.Tap (new TapEventArgs (3, UIStateToNodeState (r.State))));
-			doubleTap      = CreateTapRecognizer (1, 2, r => node.Tap (new TapEventArgs (2, UIStateToNodeState (r.State))));
+			doubleTap = CreateTapRecognizer (1, 2, r => node.Tap (new TapEventArgs (2, UIStateToNodeState (r.State))));
 
 			AddGestureRecognizer (singleTouchTap);
 			AddGestureRecognizer (doubleTouchTap);
 			AddGestureRecognizer (tripleTouchTap);
 			AddGestureRecognizer (doubleTap);
 
+			UIPanGestureRecognizer pan = new UIPanGestureRecognizer (p => node.Touch (new NodeTouchEvent (this, p)));
+			AddGestureRecognizer (pan);
+
 			node.ChildrenReordered += (o, a) => UpdateChildrenOrder ();
 		}
-
+		
 		public override void TouchesBegan (NSSet touches, UIEvent evt)
 		{
 			base.TouchesBegan (touches, evt);
-
-			node.Touch (new NodeTouchEvent (this, touches, evt, TouchType.Down));
 		}
-
+		
 		public override void TouchesMoved (NSSet touches, UIEvent evt)
 		{
 			base.TouchesMoved (touches, evt);
-
-			node.Touch (new NodeTouchEvent (this, touches, evt, TouchType.Move));
 		}
-
+		
 		public override void TouchesCancelled (NSSet touches, UIEvent evt)
 		{
 			base.TouchesCancelled (touches, evt);
 		}
-
+		
 		public override void TouchesEnded (NSSet touches, UIEvent evt)
 		{
 			base.TouchesEnded (touches, evt);
-
-			node.Touch (new NodeTouchEvent (this, touches, evt, TouchType.Up));
 		}
 
 		void UpdateChildrenOrder ()
