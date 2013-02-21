@@ -31,7 +31,7 @@ namespace Xamarin.Canvas.iOS
 		public override void LayoutSubviews ()
 		{
 			base.LayoutSubviews ();
-			root.SetSize (Frame.Width, Frame.Height);
+			root.SetSize (Bounds.Width, Bounds.Height);
 		}
 
 		NodeUIView ViewForNode (Node node)

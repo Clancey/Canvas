@@ -198,7 +198,8 @@ namespace Xamarin.Canvas.iOS.Example
 		Canvas canvas;
 		public override void LoadView ()
 		{
-			canvas = new Canvas ();
+			
+			View = canvas = new Canvas ();
 			canvas.SetBackground (new Color (1, 1, 1));
 
 			Controls.Coverflow coverflow = new Xamarin.Canvas.Controls.Coverflow (new [] {
@@ -220,11 +221,14 @@ namespace Xamarin.Canvas.iOS.Example
 			};
 
 		}
-		
-		public override void ViewDidLoad ()
+		public override UIInterfaceOrientationMask GetSupportedInterfaceOrientations ()
 		{
-			base.ViewDidLoad ();
-			View = canvas;
+			return UIInterfaceOrientationMask.All;
+		}
+		[Obsolete ("Deprecated in iOS6. Replace it with both GetSupportedInterfaceOrientations and PreferredInterfaceOrientationForPresentation")]
+		public override bool ShouldAutorotateToInterfaceOrientation (UIInterfaceOrientation toInterfaceOrientation)
+		{
+			return true;
 		}
 	}
 }
