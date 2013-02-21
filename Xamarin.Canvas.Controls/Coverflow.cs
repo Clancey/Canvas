@@ -20,13 +20,35 @@ namespace Xamarin.Canvas.Controls
 		List<CoverflowItem> images;
 		LabelNode label;
 		double offset;
+		int imagesize;
+
+		Point last;
 
 		public Coverflow ()
 		{
 			images = new List<CoverflowItem> ();
 			label = new LabelNode ();
+			imagesize = 100;
 
 			Add (label);
+		}
+
+		protected override bool OnTouch (Xamarin.Canvas.TouchEvent evnt)
+		{
+			switch (evnt.Type) {
+			case Xamarin.Canvas.TouchType.Down:
+				last = new Point (evnt.X, evnt.Y);
+				break;
+			case Xamarin.Canvas.TouchType.Move:
+				offset += (last.X - evnt.X) / (imagesize * 0.8);
+				LayoutChildren (offset);
+				last = new Point (evnt.X, evnt.Y);
+				break;
+			case Xamarin.Canvas.TouchType.Up:
+				AnimateTo ((int)Math.Round (offset), 250);
+				break;
+			}
+			return true;
 		}
 
 		public Coverflow (IEnumerable<string> files) : this ()
@@ -59,12 +81,17 @@ namespace Xamarin.Canvas.Controls
 		void AnimateTo (CoverflowItem item)
 		{
 			int target = images.IndexOf (item);
-			this.Animate ("Position", f => { offset = f; LayoutChildren (offset); }, (float)offset, (float)target, length: 500, easing: Easing.CubicOut);
+			AnimateTo (target, 500);
+		}
+
+		void AnimateTo (int index, uint length)
+		{
+			this.Animate ("Position", f => { offset = f; LayoutChildren (offset); }, (float)offset, (float)index, length: length, easing: Easing.CubicOut);
 		}
 
 		void LayoutChildren (double offset)
 		{
-			int imagesize = (int)Math.Min (Height, Width / 1.5) / 2;
+			imagesize = (int)Math.Min (Height, Width / 1.5) / 2;
 			double position = -offset;
 			foreach (var image in images) {
 				LayoutChildForPosition (image, imagesize, position);

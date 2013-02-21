@@ -20,6 +20,7 @@ namespace Xamarin.Canvas.Android
 		{
 			root = new RootNode ();
 			root.ChildAdded += (sender, e) => AddChild (sender as Node);
+			root.ChildRemoved += (sender, e) => RemoveChild (sender as Node);
 			root.Canvas = this;
 			AddChild (root);
 		}
@@ -56,10 +57,25 @@ namespace Xamarin.Canvas.Android
 			}
 		}
 
+		void RemoveChild (Node node)
+		{
+			if (node.Renderer == null)
+				return;
+
+			if (node.Parent != null && node.Parent.Renderer != null) {
+				NodeView view = node.Renderer as NodeView;
+				NodeView parent = view.Parent as NodeView;
+
+				parent.RemoveView (view);
+			}
+
+			node.Renderer = null;
+			node.AllChildren ().ForEach (n => n.Renderer = null);
+		}
+
 		#region ICanvas implementation
 		public void Destroy ()
 		{
-			Console.WriteLine ("Destroy Children");
 			root.Renderer = null;
 			root.AllChildren ().ForEach (n => n.Renderer = null);
 		}

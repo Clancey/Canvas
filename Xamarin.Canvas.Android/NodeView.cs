@@ -30,6 +30,20 @@ namespace Xamarin.Canvas.Android
 			Click += HandleClick;
 		}
 
+		public override bool OnTouchEvent (MotionEvent e)
+		{
+			var x = e.GetX ();
+			var y = e.GetY ();
+			if (e.Action == MotionEventActions.Move) {
+				return node.Touch (new TouchEvent (x, y, TouchType.Move));
+			} else if (e.Action == MotionEventActions.Down) {
+				return node.Touch (new TouchEvent (x, y, TouchType.Down));
+			} else if (e.Action == MotionEventActions.Up) {
+				return node.Touch (new TouchEvent (x, y, TouchType.Up));
+			}
+			return base.OnTouchEvent (e);
+		}
+
 		void HandleChildrenReordered (object sender, EventArgs e)
 		{
 			ChildrenDrawingOrderEnabled = true;

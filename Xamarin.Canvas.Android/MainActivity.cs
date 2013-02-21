@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using Android.App;
 using Android.Content;
@@ -17,6 +18,7 @@ namespace Xamarin.Canvas.Android
 	public class Activity1 : Activity, ISynchronizeInvoke
 	{
 		Canvas canvas;
+		Controls.Coverflow coverflow;
 
 		protected override void OnCreate (Bundle bundle)
 		{
@@ -26,7 +28,7 @@ namespace Xamarin.Canvas.Android
 			canvas = new Canvas (this.BaseContext);
 			canvas.SetBackground (new Color (0, 0, 1));
 
-			Controls.Coverflow coverflow = new Xamarin.Canvas.Controls.Coverflow (new [] {
+			coverflow = new Xamarin.Canvas.Controls.Coverflow (new [] {
 				"cover1.jpg", "cover2.jpg", "cover3.jpg", "cover4.jpg", "cover5.jpg", "cover6.jpg", 
 				"cover7.jpg", "cover8.jpg", "cover9.jpg", "cover10.jpg", "cover1.jpg", "cover2.jpg", "cover3.jpg",
 				"cover4.jpg", "cover5.jpg", "cover6.jpg", "cover7.jpg", "cover8.jpg", "cover9.jpg", "cover10.jpg",
@@ -48,7 +50,7 @@ namespace Xamarin.Canvas.Android
 
 		public override void OnConfigurationChanged (global::Android.Content.Res.Configuration newConfig)
 		{
-			Console.WriteLine ("New Configuration");
+			// we're good
 			base.OnConfigurationChanged (newConfig);
 		}
 

@@ -86,11 +86,11 @@ namespace Xamarin.Canvas
 		public virtual void Remove (Node node)
 		{
 			if (children.Remove (node)) {
-				node.Parent = null;
 				node.PreferedSizeChanged -= OnChildPreferedSizeChanged;
 				QueueDraw ();
 
 				SendChildRemoved (node);
+				node.Parent = null;
 			}
 		}
 		

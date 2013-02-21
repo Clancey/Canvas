@@ -13,6 +13,37 @@ namespace Xamarin.Canvas
 		Pressed = 1 << 1,
 	}
 
+	public enum TouchType
+	{
+		Down,
+		Up,
+		Move
+	}
+
+	public class TouchEvent
+	{
+		public double X { get; private set; }
+		public double Y { get; private set; }
+		public TouchType Type { get; private set; }
+
+		public TouchEvent (double x, double y, TouchType type)
+		{
+			X = x;
+			Y = y;
+			Type = type;
+		}
+	}
+
+	public class TouchEventArgs : EventArgs
+	{
+		public TouchEvent Event { get; private set; }
+		public bool Result { get; set; }
+
+		public TouchEventArgs (TouchEvent evnt)
+		{
+			Event = evnt;
+		}
+	}
 
 	public enum ModifierType
 	{
@@ -317,6 +348,8 @@ namespace Xamarin.Canvas
 		
 		public event EventHandler<ButtonEventArgs> ButtonPressEvent;
 		public event EventHandler<ButtonEventArgs> ButtonReleaseEvent;
+
+		public event EventHandler<TouchEventArgs> TouchEvent;
 		
 		public event EventHandler SizeChanged;
 		public event EventHandler PreferedSizeChanged;
@@ -481,6 +514,17 @@ namespace Xamarin.Canvas
 		public void KeyRelease (IKeyEvent evnt)
 		{
 			OnKeyRelease (evnt);
+		}
+
+		public bool Touch (TouchEvent evnt)
+		{
+			bool result = OnTouch (evnt);
+
+			var args = new TouchEventArgs (evnt);
+			if (TouchEvent != null)
+				TouchEvent (this, args);
+
+			return args.Result || result;
 		}
 
 		public void Tap (TapEventArgs args)
@@ -735,6 +779,7 @@ namespace Xamarin.Canvas
 		protected virtual void OnSizeAllocated (double width, double height) {}
 		protected virtual void OnTap (TapEventArgs args) {}
 		protected virtual void OnDoubleTap (TapEventArgs args) {}
+		protected virtual bool OnTouch (TouchEvent evnt) { return false; }
 		
 		public void QueueDraw ()
 		{
