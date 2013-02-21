@@ -33,10 +33,10 @@ namespace Xamarin.Motion
 
 	public class Animation : System.Collections.IEnumerable
 	{
-		float beginAt;
-		float finishAt;
-		Func<float, float> easing;
-		Action<float> step;
+		double beginAt;
+		double finishAt;
+		Func<double, double> easing;
+		Action<double> step;
 		List<Animation> children;
 		Action finished;
 		bool finishedTriggered;
@@ -48,7 +48,7 @@ namespace Xamarin.Motion
 			step = f => {};
 		}
 		
-		public Animation (Action<float> callback, float start = 0.0f, float end = 1.0f, Func<float, float> easing = null, Action finished = null)
+		public Animation (Action<double> callback, double start = 0.0f, double end = 1.0f, Func<double, double> easing = null, Action finished = null)
 		{
 			children = new List<Animation> ();
 			this.easing = easing ?? Xamarin.Motion.Easing.Linear;
@@ -63,19 +63,19 @@ namespace Xamarin.Motion
 			return children.GetEnumerator ();
 		}
 		
-		public Animation Insert (float beginAt, float finishAt, Animation animation)
+		public Animation Insert (double beginAt, double finishAt, Animation animation)
 		{
 			Add (beginAt, finishAt, animation);
 			return this;
 		}
 		
 		public void Commit (Animatable owner, string name, uint rate = 16, uint length = 250, 
-		                    Func<float, float> easing = null, Action<float, bool> finished = null, Func<bool> repeat = null)
+		                    Func<double, double> easing = null, Action<double, bool> finished = null, Func<bool> repeat = null)
 		{
 			owner.Animate (name, this, rate, length, easing, finished, repeat);
 		}
 		
-		public void Add (float beginAt, float finishAt, Animation animation)
+		public void Add (double beginAt, double finishAt, Animation animation)
 		{
 			if (beginAt < 0 || beginAt > 1)
 				throw new ArgumentOutOfRangeException ("beginAt");
@@ -91,7 +91,7 @@ namespace Xamarin.Motion
 			children.Add (animation);
 		}
 		
-		public Animation WithConcurrent (Animation animation, float beginAt = 0.0f, float finishAt = 1.0f)
+		public Animation WithConcurrent (Animation animation, double beginAt = 0.0f, double finishAt = 1.0f)
 		{
 			animation.beginAt = beginAt;
 			animation.finishAt = finishAt;
@@ -99,7 +99,7 @@ namespace Xamarin.Motion
 			return this;
 		}
 		
-		public Animation WithConcurrent (Action<float> callback, float start = 0.0f, float end = 1.0f, Func<float, float> easing = null, float beginAt = 0.0f, float finishAt = 1.0f)
+		public Animation WithConcurrent (Action<double> callback, double start = 0.0f, double end = 1.0f, Func<double, double> easing = null, double beginAt = 0.0f, double finishAt = 1.0f)
 		{
 			Animation child = new Animation (callback, start, end, easing);
 			child.beginAt = beginAt;
@@ -108,15 +108,15 @@ namespace Xamarin.Motion
 			return this;
 		}
 		
-		public Action<float> GetCallback ()
+		public Action<double> GetCallback ()
 		{
-			Action<float> result = f => {
+			Action<double> result = f => {
 				step (easing (f));
 				foreach (var animation in children) {
 					if (animation.finishedTriggered)
 						continue;
 					
-					float val = Math.Max (0.0f, Math.Min (1.0f, (f - animation.beginAt) / (animation.finishAt - animation.beginAt)));
+					double val = Math.Max (0.0f, Math.Min (1.0f, (f - animation.beginAt) / (animation.finishAt - animation.beginAt)));
 					
 					if (val <= 0.0f) // not ready to process yet
 						continue;

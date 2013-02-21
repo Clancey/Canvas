@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Timers;
@@ -34,6 +35,11 @@ namespace Xamarin.Motion
 {
 	internal class Ticker
 	{
+		static Ticker ticker;
+		public static Ticker Default {
+			get { return ticker ?? (ticker = new Ticker ()); }
+		}
+
 		Timer timer;
 		List<Tuple<int, Func<bool>>> timeouts;
 		int count;
@@ -41,9 +47,8 @@ namespace Xamarin.Motion
 		public Ticker ()
 		{
 			count = 0;
-			timer = new Timer (14);
+			timer = new Timer (16);
 			timer.Elapsed += HandleElapsed;
-			timer.Start ();
 			timeouts = new List<Tuple<int, Func<bool>>> ();
 		}
 
@@ -55,20 +60,19 @@ namespace Xamarin.Motion
 
 		void SendSignals ()
 		{
-			List<int> removals = new List<int> ();
-			foreach (var timeout in timeouts) {
+			var localCopy = new List<Tuple<int, Func<bool>>> (timeouts);
+			foreach (var timeout in localCopy) {
 				bool remove = !timeout.Item2 ();
-				if (remove) {
-					removals.Add (timeout.Item1);
-				}
+				if (remove)
+					timeouts.RemoveAll (t => t.Item1 == timeout.Item1);
 			}
 
-			foreach (int item in removals)
-				timeouts.RemoveAll (t => t.Item1 == item);
 		}
 
 		public int Insert (Func<bool> timeout)
 		{
+			if (!timer.Enabled)
+				timer.Enabled = true;
 			count++;
 			timeouts.Add (new Tuple<int, Func<bool>> (count, timeout));
 			return count;
@@ -77,6 +81,9 @@ namespace Xamarin.Motion
 		public void Remove (int handle)
 		{
 			timeouts.RemoveAll (t => t.Item1 == handle);
+
+			if (!timeouts.Any ())
+				timer.Enabled = false;
 		}
 	}
 
@@ -84,15 +91,11 @@ namespace Xamarin.Motion
 	{
 		public static ISynchronizeInvoke Sync { get; set; }
 
-		static Ticker ticker;
-		static Ticker Ticker {
-			get { return ticker ?? (ticker = new Ticker ()); }
-		}
-
 		public uint Length { get; private set; }
 		public uint Rate { get; private set; }
-		public float Value { get; private set; }
-		public Func<float, float> Easing { get; set; }
+		public double Value { get; private set; }
+		public long Timestep { get; private set; }
+		public Func<double, double> Easing { get; set; }
 		public bool Loop { get; set; }
 		public string Handle { get; set; }
 		
@@ -105,6 +108,7 @@ namespace Xamarin.Motion
 		
 		Stopwatch runningTime;
 		int timer;
+		long lastMilliseconds;
 		
 		public Tweener (uint length, uint rate)
 		{
@@ -119,7 +123,7 @@ namespace Xamarin.Motion
 		~Tweener ()
 		{
 			if (timer != 0)
-				Ticker.Remove (timer);
+				Ticker.Default.Remove (timer);
 			timer = 0;
 		}
 		
@@ -129,9 +133,16 @@ namespace Xamarin.Motion
 
 			runningTime.Start ();
 
-			timer = Ticker.Insert (() => {
-				float rawValue = Math.Min (1.0f, runningTime.ElapsedMilliseconds / (float) Length);
+			lastMilliseconds = 0;
+			timer = Ticker.Default.Insert (() => {
+				var ms = runningTime.ElapsedMilliseconds;
+
+				double rawValue = Math.Min (1.0f, ms / (double) Length);
 				Value = Easing (rawValue);
+
+				Timestep = ms - lastMilliseconds;
+				lastMilliseconds = ms;
+
 				if (ValueUpdated != null)
 					ValueUpdated (this, EventArgs.Empty);
 				
@@ -177,7 +188,7 @@ namespace Xamarin.Motion
 			runningTime.Stop ();
 			
 			if (timer != 0) {
-				Ticker.Remove (timer);
+				Ticker.Default.Remove (timer);
 				timer = 0;
 			}
 		}

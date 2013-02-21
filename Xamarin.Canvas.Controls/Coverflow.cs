@@ -19,10 +19,18 @@ namespace Xamarin.Canvas.Controls
 	{
 		List<CoverflowItem> images;
 		LabelNode label;
-		double offset;
 		int imagesize;
-
 		Point last;
+
+		double offset;
+		double Offset {
+			get { return offset; }
+			set {
+				value = value.Clamp (0, images.Count - 1);
+				offset = value;
+				LayoutChildren (offset);
+			}
+		}
 
 		public Coverflow ()
 		{
@@ -32,31 +40,37 @@ namespace Xamarin.Canvas.Controls
 
 			Add (label);
 		}
-
-		protected override bool OnTouch (Xamarin.Canvas.TouchEvent evnt)
-		{
-			switch (evnt.Type) {
-			case Xamarin.Canvas.TouchType.Down:
-				last = new Point (evnt.X, evnt.Y);
-				break;
-			case Xamarin.Canvas.TouchType.Move:
-				offset += (last.X - evnt.X) / (imagesize * 0.8);
-				LayoutChildren (offset);
-				last = new Point (evnt.X, evnt.Y);
-				break;
-			case Xamarin.Canvas.TouchType.Up:
-				AnimateTo ((int)Math.Round (offset), 250);
-				break;
-			}
-			return true;
-		}
-
+		
 		public Coverflow (IEnumerable<string> files) : this ()
 		{
 			foreach (var file in files) {
 				CoverflowItem item = new CoverflowItem (file);
 				Add (item);
 			}
+		}
+
+		protected override bool OnTouch (Xamarin.Canvas.TouchEvent evnt)
+		{
+			switch (evnt.Type) {
+			case Xamarin.Canvas.TouchType.Down:
+				this.AbortAnimation ("KineticScroll");
+				last = evnt.Point;
+				break;
+			case Xamarin.Canvas.TouchType.Move:
+				Offset += (last.X - evnt.Point.X) / (imagesize * 0.8);
+				last = new Point (evnt.Point.X, evnt.Point.Y);
+				break;
+			case Xamarin.Canvas.TouchType.Up:
+				bool floor = evnt.Velocity.X > 0;
+				this.AnimateKinetic ("KineticScroll", (d, v) => {
+					Offset -= d / imagesize;
+					return v > 1;
+				}, evnt.Velocity.X, .025, () => {
+					AnimateTo ((int) (floor ? Math.Floor (Offset) : Math.Ceiling (Offset)), 250);
+				});
+				break;
+			}
+			return true;
 		}
 
 		public override void Add (Node node)
@@ -75,7 +89,7 @@ namespace Xamarin.Canvas.Controls
 
 		protected override void OnSizeAllocated (double width, double height)
 		{
-			LayoutChildren (offset);
+			LayoutChildren (Offset);
 		}
 
 		void AnimateTo (CoverflowItem item)
@@ -86,7 +100,7 @@ namespace Xamarin.Canvas.Controls
 
 		void AnimateTo (int index, uint length)
 		{
-			this.Animate ("Position", f => { offset = f; LayoutChildren (offset); }, (float)offset, (float)index, length: length, easing: Easing.CubicOut);
+			this.Animate ("Position", f => Offset = f, (float)Offset, (float)index, length: length, easing: Easing.CubicOut);
 		}
 
 		void LayoutChildren (double offset)
@@ -97,12 +111,12 @@ namespace Xamarin.Canvas.Controls
 				LayoutChildForPosition (image, imagesize, position);
 				position += 1;
 			}
-
 			List<Node> newOrder = Children
 				.Where (n => n.RotationY <= 0)
 				.OrderBy (n => n.RotationY)
 					.Concat (Children.Where (n => n.RotationY > 0).OrderByDescending (n => n.RotationY)).ToList ();
 			SortChildren (newOrder);
+
 		}
 
 		void LayoutChildForPosition (CoverflowItem item, int size, double position)
@@ -115,7 +129,8 @@ namespace Xamarin.Canvas.Controls
 			item.SetSize (size, size);
 			item.X = center.X - size / 2;
 			item.Y = center.Y - size / 2;
-			item.RotationY = rotation * 75;
+			item.RotationY = (rotation * 75).Clamp (-72, 72);
+			item.X = item.X.Clamp (-size - 10, Width + 10);
 			item.QueueDraw ();
 		}
 	}

@@ -35,49 +35,89 @@ namespace Xamarin.Motion
 	{
 		class Info
 		{
-			public Func<float, float> Easing { get; set; }
+			public Func<double, double> Easing { get; set; }
 			public uint Rate { get; set; }
 			public uint Length { get; set; }
 			public Animatable Owner { get; set; }
-			public Action<float> callback;
-			public Action<float, bool> finished;
+			public Action<double> callback;
+			public Action<double, bool> finished;
 			public Func<bool> repeat;
 			public Tweener tweener;
 		}
 		
 		static Dictionary<string, Info> animations;
+		static Dictionary<string, int> kinetics;
 		
 		static AnimationExtensions ()
 		{
 			animations = new Dictionary<string, Info> ();
+			kinetics = new Dictionary<string, int> ();
 		}
-		
+
+		public static void AnimateKinetic (this Animatable self, string name, Func<double, double, bool> callback, double velocity, double drag, Action finished = null)
+		{
+			name += self.GetHashCode ().ToString ();
+
+			System.Diagnostics.Stopwatch sw = new Stopwatch ();
+			sw.Start ();
+
+			if (kinetics.ContainsKey (name)) {
+				Ticker.Default.Remove (kinetics[name]);
+			}
+
+			double sign = velocity / Math.Abs (velocity);
+			velocity = Math.Abs (velocity);
+
+			var tick = Ticker.Default.Insert (() => {
+				var ms = sw.ElapsedMilliseconds;
+				sw.Stop ();
+				sw.Reset ();
+				sw.Start ();
+
+				velocity -= drag * ms;
+				velocity = Math.Max (0, velocity);
+
+				bool result = false;
+				if (velocity > 0) {
+					result = callback (sign * velocity * ms, velocity);
+				}
+
+				if (!result) {
+					finished ();
+					kinetics.Remove (name);
+				}
+				return result;
+			});
+
+			kinetics [name] = tick;
+		}
+
 		public static void Animate (this Animatable self, string name, Animation animation, uint rate = 16, uint length = 250, 
-		                            Func<float, float> easing = null, Action<float, bool> finished = null, Func<bool> repeat = null)
+		                            Func<double, double> easing = null, Action<double, bool> finished = null, Func<bool> repeat = null)
 		{
 			self.Animate (name, animation.GetCallback (), rate, length, easing, finished, repeat);
 		}
 		
-		public static Func<float, float> Interpolate (float start, float end = 1.0f, float reverseVal = 0.0f, bool reverse = false)
+		public static Func<double, double> Interpolate (double start, double end = 1.0f, double reverseVal = 0.0f, bool reverse = false)
 		{
-			float target = (reverse ? reverseVal : end);
+			double target = (reverse ? reverseVal : end);
 			return x => start + (target - start) * x;
 		}
 		
-		public static void Animate (this Animatable self, string name, Action<float> callback, float start, float end, uint rate = 16, uint length = 250, 
-		                            Func<float, float> easing = null, Action<float, bool> finished = null, Func<bool> repeat = null)
+		public static void Animate (this Animatable self, string name, Action<double> callback, double start, double end, uint rate = 16, uint length = 250, 
+		                            Func<double, double> easing = null, Action<double, bool> finished = null, Func<bool> repeat = null)
 		{
-			self.Animate<float> (name, Interpolate (start, end), callback, rate, length, easing, finished, repeat);
+			self.Animate<double> (name, Interpolate (start, end), callback, rate, length, easing, finished, repeat);
 		}
 		
-		public static void Animate (this Animatable self, string name, Action<float> callback, uint rate = 16, uint length = 250, 
-		                            Func<float, float> easing = null, Action<float, bool> finished = null, Func<bool> repeat = null)
+		public static void Animate (this Animatable self, string name, Action<double> callback, uint rate = 16, uint length = 250, 
+		                            Func<double, double> easing = null, Action<double, bool> finished = null, Func<bool> repeat = null)
 		{
-			self.Animate<float> (name, x => x, callback, rate, length, easing, finished, repeat);
+			self.Animate<double> (name, x => x, callback, rate, length, easing, finished, repeat);
 		}
 		
-		public static void Animate<T> (this Animatable self, string name, Func<float, T> transform, Action<T> callback, uint rate = 16, uint length = 250, 
-		                               Func<float, float> easing = null, Action<T, bool> finished = null, Func<bool> repeat = null) 
+		public static void Animate<T> (this Animatable self, string name, Func<double, T> transform, Action<T> callback, uint rate = 16, uint length = 250, 
+		                               Func<double, double> easing = null, Action<T, bool> finished = null, Func<bool> repeat = null)
 		{
 			if (transform == null)
 				throw new ArgumentNullException ("transform");
@@ -89,8 +129,8 @@ namespace Xamarin.Motion
 			self.AbortAnimation (name);
 			name += self.GetHashCode ().ToString ();
 			
-			Action<float> step = f => callback (transform(f));
-			Action<float, bool> final = null;
+			Action<double> step = f => callback (transform(f));
+			Action<double, bool> final = null;
 			if (finished != null)
 				final = (f, b) => finished (transform(f), b);
 			
@@ -121,18 +161,22 @@ namespace Xamarin.Motion
 		public static bool AbortAnimation (this Animatable self, string handle)
 		{
 			handle += self.GetHashCode ().ToString ();
-			if (!animations.ContainsKey (handle))
-				return false;
-			
-			Info info = animations[handle];
-			info.tweener.ValueUpdated -= HandleTweenerUpdated;
-			info.tweener.Finished -= HandleTweenerFinished;
-			info.tweener.Stop ();
-			
-			animations.Remove (handle);
-			if (info.finished != null)
-				info.finished (1.0f, true);
-			return true;
+			if (animations.ContainsKey (handle)) {
+				Info info = animations [handle];
+				info.tweener.ValueUpdated -= HandleTweenerUpdated;
+				info.tweener.Finished -= HandleTweenerFinished;
+				info.tweener.Stop ();
+				
+				animations.Remove (handle);
+				if (info.finished != null)
+					info.finished (1.0f, true);
+				return true;
+
+			} else if (kinetics.ContainsKey (handle)) {
+				Ticker.Default.Remove (kinetics[handle]);
+				kinetics.Remove (handle);
+			}
+			return false;
 		}
 		
 		public static bool AnimationIsRunning (this Animatable self, string handle)

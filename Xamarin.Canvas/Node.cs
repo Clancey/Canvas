@@ -20,17 +20,14 @@ namespace Xamarin.Canvas
 		Move
 	}
 
-	public class TouchEvent
+	public abstract class TouchEvent
 	{
-		public double X { get; private set; }
-		public double Y { get; private set; }
-		public TouchType Type { get; private set; }
+		public abstract Point Point { get; }
+		public abstract Vec2 Velocity { get; }
+		public abstract TouchType Type { get; }
 
-		public TouchEvent (double x, double y, TouchType type)
+		public TouchEvent ()
 		{
-			X = x;
-			Y = y;
-			Type = type;
 		}
 	}
 
@@ -157,15 +154,15 @@ namespace Xamarin.Canvas
 		public virtual Animation Tween (NodeDataStore target)
 		{
 			var anim = new Animation ();
-			if (X != target.X) anim.Insert (0, 1, new Animation (f => X = f, (float)X, (float)target.X));
-			if (Y != target.Y) anim.Insert (0, 1, new Animation (f => Y = f, (float)Y, (float)target.Y));
-			if (Width != target.Width) anim.Insert (0, 1, new Animation (f => Width = f, (float)Width, (float)target.Width));
-			if (Height != target.Height) anim.Insert (0, 1, new Animation (f => Height = f, (float)Height, (float)target.Height));
-			if (Scale != target.Scale) anim.Insert (0, 1, new Animation (f => Scale = f, (float)Scale, (float)target.Scale));
-			if (Rotation != target.Rotation) anim.Insert (0, 1, new Animation (f => Rotation = f, (float)Rotation, (float)target.Rotation));
-			if (RotationX != target.RotationX) anim.Insert (0, 1, new Animation (f => RotationX = f, (float)RotationX, (float)target.RotationX));
-			if (RotationY != target.RotationY) anim.Insert (0, 1, new Animation (f => RotationY = f, (float)RotationY, (float)target.RotationY));
-			if (Opacity != target.Opacity) anim.Insert (0, 1, new Animation (f => Opacity = f, (float)Opacity, (float)target.Opacity));
+			if (X != target.X) anim.Insert (0, 1, new Animation (f => X = f, X, target.X));
+			if (Y != target.Y) anim.Insert (0, 1, new Animation (f => Y = f, Y, target.Y));
+			if (Width != target.Width) anim.Insert (0, 1, new Animation (f => Width = f, Width, target.Width));
+			if (Height != target.Height) anim.Insert (0, 1, new Animation (f => Height = f, Height, target.Height));
+			if (Scale != target.Scale) anim.Insert (0, 1, new Animation (f => Scale = f, Scale, target.Scale));
+			if (Rotation != target.Rotation) anim.Insert (0, 1, new Animation (f => Rotation = f, Rotation, target.Rotation));
+			if (RotationX != target.RotationX) anim.Insert (0, 1, new Animation (f => RotationX = f, RotationX, target.RotationX));
+			if (RotationY != target.RotationY) anim.Insert (0, 1, new Animation (f => RotationY = f, RotationY, target.RotationY));
+			if (Opacity != target.Opacity) anim.Insert (0, 1, new Animation (f => Opacity = f, Opacity, target.Opacity));
 			return anim;
 		}
 	}
@@ -560,7 +557,7 @@ namespace Xamarin.Canvas
 			return new Point(resX, resY);
 		}
 		
-		public IContinuation<bool> CurveTo (double x1, double y1, double x2, double y2, double x3, double y3, uint length = 250, Func<float, float> easing = null)
+		public IContinuation<bool> CurveTo (double x1, double y1, double x2, double y2, double x3, double y3, uint length = 250, Func<double, double> easing = null)
 		{
 			if (easing == null)
 				easing = Easing.Linear;
@@ -583,22 +580,22 @@ namespace Xamarin.Canvas
 			return result;
 		}
 		
-		public IContinuation<bool> RelMoveTo (double dx, double dy, uint length = 250, Func<float, float> easing = null)
+		public IContinuation<bool> RelMoveTo (double dx, double dy, uint length = 250, Func<double, double> easing = null)
 		{
 			return MoveTo (X + dx, Y + dy, length, easing);
 		}
 		
-		public IContinuation<bool> RelRotateTo (double drotation, uint length = 250, Func<float, float> easing = null)
+		public IContinuation<bool> RelRotateTo (double drotation, uint length = 250, Func<double, double> easing = null)
 		{
 			return RotateTo (Rotation + drotation, length, easing);
 		}
 		
-		public IContinuation<bool> RelScaleTo (double dscale, uint length = 250, Func<float, float> easing = null)
+		public IContinuation<bool> RelScaleTo (double dscale, uint length = 250, Func<double, double> easing = null)
 		{
 			return ScaleTo (Scale + dscale, length, easing);
 		}
 		
-		public IContinuation<bool> MoveTo (double x, double y, uint length = 250, Func<float, float> easing = null)
+		public IContinuation<bool> MoveTo (double x, double y, uint length = 250, Func<double, double> easing = null)
 		{
 			if (easing == null)
 				easing = Easing.Linear;
@@ -606,8 +603,8 @@ namespace Xamarin.Canvas
 			Continuation<bool> result = new Continuation<bool> ();
 			
 			new Animation ()
-				.Insert (0, 1, new Animation (f => X = f, (float)X, (float)x, easing))
-					.Insert (0, 1, new Animation (f => Y = f, (float)Y, (float)y, easing))
+				.Insert (0, 1, new Animation (f => X = f, X, x, easing))
+					.Insert (0, 1, new Animation (f => Y = f, Y, y, easing))
 					.Commit (this, "MoveTo", 16, length, finished: (f, a) => {
 						result.Invoke (a);
 					});
@@ -615,14 +612,14 @@ namespace Xamarin.Canvas
 			return result;
 		}
 		
-		public IContinuation<bool> RotateTo (double roatation, uint length = 250, Func<float, float> easing = null)
+		public IContinuation<bool> RotateTo (double roatation, uint length = 250, Func<double, double> easing = null)
 		{
 			if (easing == null)
 				easing = Easing.Linear;
 			
 			Continuation<bool> result = new Continuation<bool> ();
 			
-			new Animation (f => Rotation = f, (float)Rotation, (float)roatation, easing)
+			new Animation (f => Rotation = f, Rotation, roatation, easing)
 				.Commit (this, "RotateTo", 16, length, finished: (f, a) => {
 					result.Invoke (a);
 				});
@@ -630,14 +627,14 @@ namespace Xamarin.Canvas
 			return result;
 		}
 		
-		public IContinuation<bool> ScaleTo (double scale, uint length = 250, Func<float, float> easing = null)
+		public IContinuation<bool> ScaleTo (double scale, uint length = 250, Func<double, double> easing = null)
 		{
 			if (easing == null)
 				easing = Easing.Linear;
 			
 			Continuation<bool> result = new Continuation<bool> ();
 			
-			new Animation (f => Scale = f, (float)Scale, (float)scale, easing)
+			new Animation (f => Scale = f, Scale, scale, easing)
 				.Commit (this, "ScaleTo", 16, length, finished: (f, a) => {
 					result.Invoke (a);
 				});
@@ -645,15 +642,15 @@ namespace Xamarin.Canvas
 			return result;
 		}
 		
-		public IContinuation<bool> SizeTo (double width, double height, uint length = 250, Func<float, float> easing = null)
+		public IContinuation<bool> SizeTo (double width, double height, uint length = 250, Func<double, double> easing = null)
 		{
 			if (easing == null)
 				easing = Easing.Linear;
 			
 			Continuation<bool> result = new Continuation<bool> ();
 			
-			var wInterp = AnimationExtensions.Interpolate ((float)Width, (float)width);
-			var hInterp = AnimationExtensions.Interpolate ((float)Height, (float)height);
+			var wInterp = AnimationExtensions.Interpolate (Width, width);
+			var hInterp = AnimationExtensions.Interpolate (Height, height);
 			new Animation ()
 				.Insert (0, 1, new Animation (f => SetSize (wInterp (f), hInterp (f)) , 0, 1, easing))
 					.Commit (this, "SizeTo", 16, length, finished: (f, a) => {
@@ -663,13 +660,13 @@ namespace Xamarin.Canvas
 			return result;
 		}
 		
-		public IContinuation<bool> FadeTo (double opacity, uint length = 250, Func<float, float> easing = null)
+		public IContinuation<bool> FadeTo (double opacity, uint length = 250, Func<double, double> easing = null)
 		{
 			if (easing == null)
 				easing = Easing.Linear;
 			
 			Continuation<bool> result = new Continuation<bool> ();
-			new Animation (f => Opacity = f, (float)Opacity, (float)opacity, easing)
+			new Animation (f => Opacity = f, Opacity, opacity, easing)
 				.Commit (this, "FadeTo", 16, length, finished: (f, a) => {
 					result.Invoke (a);
 				});
@@ -677,7 +674,7 @@ namespace Xamarin.Canvas
 			return result;
 		}
 
-		public IContinuation<bool> Animate (uint length, Func<float, float> easing, params object[] args)
+		public IContinuation<bool> Animate (uint length, Func<double, double> easing, params object[] args)
 		{
 			if (args.Length % 2 == 1)
 				throw new ArgumentException ("Passed number of arguments must be even");
@@ -695,31 +692,31 @@ namespace Xamarin.Canvas
 
 				switch (name) {
 				case "x":
-					anim.Insert (0, 1, new Animation (f => X = f, (float)X, (float)(double)args[i+1]));
+					anim.Insert (0, 1, new Animation (f => X = f, X, (double)args[i+1]));
 					break;
 				case "y":
-					anim.Insert (0, 1, new Animation (f => Y = f, (float)Y, (float)(double)args[i+1]));
+					anim.Insert (0, 1, new Animation (f => Y = f, Y, (double)args[i+1]));
 					break;
 				case "opacity":
-					anim.Insert (0, 1, new Animation (f => Opacity = f, (float)Opacity, (float)(double)args[i+1]));
+					anim.Insert (0, 1, new Animation (f => Opacity = f, Opacity, (double)args[i+1]));
 					break;
 				case "width":
-					anim.Insert (0, 1, new Animation (f => Width = f, (float)Width, (float)(double)args[i+1]));
+					anim.Insert (0, 1, new Animation (f => Width = f, Width, (double)args[i+1]));
 					break;
 				case "height":
-					anim.Insert (0, 1, new Animation (f => Height = f, (float)Height, (float)(double)args[i+1]));
+					anim.Insert (0, 1, new Animation (f => Height = f, Height, (double)args[i+1]));
 					break;
 				case "scale":
-					anim.Insert (0, 1, new Animation (f => Scale = f, (float)Scale, (float)(double)args[i+1]));
+					anim.Insert (0, 1, new Animation (f => Scale = f, Scale, (double)args[i+1]));
 					break;
 				case "rotation":
-					anim.Insert (0, 1, new Animation (f => Rotation = f, (float)Rotation, (float)(double)args[i+1]));
+					anim.Insert (0, 1, new Animation (f => Rotation = f, Rotation, (double)args[i+1]));
 					break;
 				case "rotationx":
-					anim.Insert (0, 1, new Animation (f => RotationX = f, (float)RotationX, (float)(double)args[i+1]));
+					anim.Insert (0, 1, new Animation (f => RotationX = f, RotationX, (double)args[i+1]));
 					break;
 				case "rotationy":
-					anim.Insert (0, 1, new Animation (f => RotationY = f, (float)RotationY, (float)(double)args[i+1]));
+					anim.Insert (0, 1, new Animation (f => RotationY = f, RotationY, (double)args[i+1]));
 					break;
 				}
 			}
@@ -742,6 +739,9 @@ namespace Xamarin.Canvas
 		
 		public void SetSize (double width, double height)
 		{
+			if (Width == width && Height == height)
+				return;
+
 			Width = width;
 			Height = height;
 			

@@ -11,10 +11,48 @@ using System.ComponentModel;
 
 namespace Xamarin.Canvas.Android
 {
+	public class NodeTouchEvent : TouchEvent
+	{
+		TouchType type;
+		Point point;
+		VelocityTracker velocity;
+
+		public override Point Point {
+			get { return point; }
+		}
+
+		public override TouchType Type {
+			get { return type; }
+		}
+
+		public override Vec2 Velocity {
+			get {
+				velocity.ComputeCurrentVelocity (1);
+				return new Vec2 (velocity.XVelocity, velocity.YVelocity);
+			}
+		}
+
+		public NodeTouchEvent (MotionEvent motion, VelocityTracker velocity)
+		{
+			this.velocity = velocity;
+			velocity.AddMovement (motion);
+
+			point = new Point (motion.GetX (), motion.GetY ());
+
+			if (motion.Action == MotionEventActions.Move) {
+				type = TouchType.Move;
+			} else if (motion.Action == MotionEventActions.Down) {
+				type = TouchType.Down;
+			} else if (motion.Action == MotionEventActions.Up) {
+				type = TouchType.Up;
+			}
+		}
+	}
 
 	public class NodeView : ViewGroup
 	{
 		Node node;
+		VelocityTracker velocity;
 
 		public NodeView (Context context, Node node) : base (context)
 		{
@@ -32,14 +70,16 @@ namespace Xamarin.Canvas.Android
 
 		public override bool OnTouchEvent (MotionEvent e)
 		{
-			var x = e.GetX ();
-			var y = e.GetY ();
-			if (e.Action == MotionEventActions.Move) {
-				return node.Touch (new TouchEvent (x, y, TouchType.Move));
-			} else if (e.Action == MotionEventActions.Down) {
-				return node.Touch (new TouchEvent (x, y, TouchType.Down));
-			} else if (e.Action == MotionEventActions.Up) {
-				return node.Touch (new TouchEvent (x, y, TouchType.Up));
+			if (e.Action == MotionEventActions.Move ||  e.Action == MotionEventActions.Down || e.Action == MotionEventActions.Up) {
+				if (e.Action == MotionEventActions.Down || velocity == null)
+					velocity = VelocityTracker.Obtain ();
+
+				var result = node.Touch (new NodeTouchEvent (e, velocity));
+
+				if (e.Action == MotionEventActions.Up)
+					velocity = null;
+
+				return result;
 			}
 			return base.OnTouchEvent (e);
 		}
@@ -66,6 +106,11 @@ namespace Xamarin.Canvas.Android
 
 		protected virtual void UpdateNativeView ()
 		{
+			if (node.AnchorX != 0.5)
+				PivotX = (float)(node.AnchorX * node.Width);
+			if (node.AnchorY != 0.5)
+				PivotY = (float)(node.AnchorY * node.Height);
+
 			SetX ((float)node.X);
 			SetY ((float)node.Y);
 			Alpha = (float)node.Opacity;
