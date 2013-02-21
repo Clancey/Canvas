@@ -11,6 +11,34 @@ using MonoTouch.Foundation;
 
 namespace Xamarin.Canvas.iOS
 {
+	public class NodeTouchEvent : TouchEvent
+	{
+		Point point;
+		TouchType type;
+		Vec2 velocity;
+
+		public override Point Point {
+			get { return point; }
+		}
+
+		public override TouchType Type {
+			get { return type; }
+		}
+
+		public override Vec2 Velocity {
+			get { return velocity; }
+		}
+
+		public NodeTouchEvent (NodeUIView sender, NSSet touches, UIEvent evt, TouchType type)
+		{
+			this.type = type;
+
+			UITouch touch = touches.AnyObject as UITouch;
+			var touchLocation = touch.LocationInView (sender);
+			point = new Point (touchLocation.X, touchLocation.Y);
+		}
+	}
+
 	public class NodeUIView : UIView, ICanvasRenderer
 	{
 		Node node;
@@ -22,7 +50,7 @@ namespace Xamarin.Canvas.iOS
 		public NodeUIView (Node node)
 		{
 			this.node = node;
-			this.BackgroundColor = UIColor.Clear;
+			this.BackgroundColor = new Color (0.2, 0.4, 0.6).ToUIColor ();
 			
 			node.RedrawNeeded += (o, a) => { if (o == node) UpdateNativeWidget (); };
 			node.SizeChanged += (o, a) => UpdateNativeWidget ();
@@ -43,11 +71,15 @@ namespace Xamarin.Canvas.iOS
 		public override void TouchesBegan (NSSet touches, UIEvent evt)
 		{
 			base.TouchesBegan (touches, evt);
+
+			node.Touch (new NodeTouchEvent (this, touches, evt, TouchType.Down));
 		}
 
 		public override void TouchesMoved (NSSet touches, UIEvent evt)
 		{
 			base.TouchesMoved (touches, evt);
+
+			node.Touch (new NodeTouchEvent (this, touches, evt, TouchType.Move));
 		}
 
 		public override void TouchesCancelled (NSSet touches, UIEvent evt)
@@ -58,14 +90,15 @@ namespace Xamarin.Canvas.iOS
 		public override void TouchesEnded (NSSet touches, UIEvent evt)
 		{
 			base.TouchesEnded (touches, evt);
+
+			node.Touch (new NodeTouchEvent (this, touches, evt, TouchType.Up));
 		}
 
 		void UpdateChildrenOrder ()
 		{
 			foreach (var child in node.Children) {
 				UIView nativeControl = child.Renderer as UIView;
-				nativeControl.RemoveFromSuperview ();
-				AddSubview (nativeControl);
+				BringSubviewToFront (nativeControl);
 			}
 		}
 

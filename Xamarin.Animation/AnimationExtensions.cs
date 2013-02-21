@@ -56,14 +56,11 @@ namespace Xamarin.Motion
 
 		public static void AnimateKinetic (this Animatable self, string name, Func<double, double, bool> callback, double velocity, double drag, Action finished = null)
 		{
+			self.AbortAnimation (name);
 			name += self.GetHashCode ().ToString ();
 
 			System.Diagnostics.Stopwatch sw = new Stopwatch ();
 			sw.Start ();
-
-			if (kinetics.ContainsKey (name)) {
-				Ticker.Default.Remove (kinetics[name]);
-			}
 
 			double sign = velocity / Math.Abs (velocity);
 			velocity = Math.Abs (velocity);
@@ -85,6 +82,7 @@ namespace Xamarin.Motion
 				if (!result) {
 					finished ();
 					kinetics.Remove (name);
+					sw.Stop ();
 				}
 				return result;
 			});

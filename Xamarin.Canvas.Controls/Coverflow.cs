@@ -53,7 +53,7 @@ namespace Xamarin.Canvas.Controls
 		{
 			switch (evnt.Type) {
 			case Xamarin.Canvas.TouchType.Down:
-				this.AbortAnimation ("KineticScroll");
+				this.AbortAnimation ("Position");
 				last = evnt.Point;
 				break;
 			case Xamarin.Canvas.TouchType.Move:
@@ -62,7 +62,7 @@ namespace Xamarin.Canvas.Controls
 				break;
 			case Xamarin.Canvas.TouchType.Up:
 				bool floor = evnt.Velocity.X > 0;
-				this.AnimateKinetic ("KineticScroll", (d, v) => {
+				this.AnimateKinetic ("Position", (d, v) => {
 					Offset -= d / imagesize;
 					return v > 1;
 				}, evnt.Velocity.X, .025, () => {
