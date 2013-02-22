@@ -37,6 +37,7 @@ namespace Xamarin.Canvas.Controls
 			images = new List<CoverflowItem> ();
 			label = new LabelNode ();
 			imagesize = 100;
+			TouchEvents = true;
 
 			Add (label);
 		}
@@ -105,7 +106,7 @@ namespace Xamarin.Canvas.Controls
 
 		void LayoutChildren (double offset)
 		{
-			imagesize = (int)Math.Min (Height, Width / 1.5) / 2;
+			imagesize = (int)Math.Min (Height, Width / 1.8) / 2;
 			double position = -offset;
 			foreach (var image in images) {
 				LayoutChildForPosition (image, imagesize, position);

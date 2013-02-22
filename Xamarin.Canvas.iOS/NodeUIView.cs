@@ -83,30 +83,12 @@ namespace Xamarin.Canvas.iOS
 			AddGestureRecognizer (tripleTouchTap);
 			AddGestureRecognizer (doubleTap);
 
-			UIPanGestureRecognizer pan = new UIPanGestureRecognizer (p => node.Touch (new NodeTouchEvent (this, p)));
-			AddGestureRecognizer (pan);
+			if (node.TouchEvents) {
+				UIPanGestureRecognizer pan = new UIPanGestureRecognizer (p => node.Touch (new NodeTouchEvent (this, p)));
+				AddGestureRecognizer (pan);
+			}
 
 			node.ChildrenReordered += (o, a) => UpdateChildrenOrder ();
-		}
-		
-		public override void TouchesBegan (NSSet touches, UIEvent evt)
-		{
-			base.TouchesBegan (touches, evt);
-		}
-		
-		public override void TouchesMoved (NSSet touches, UIEvent evt)
-		{
-			base.TouchesMoved (touches, evt);
-		}
-		
-		public override void TouchesCancelled (NSSet touches, UIEvent evt)
-		{
-			base.TouchesCancelled (touches, evt);
-		}
-		
-		public override void TouchesEnded (NSSet touches, UIEvent evt)
-		{
-			base.TouchesEnded (touches, evt);
 		}
 
 		void UpdateChildrenOrder ()

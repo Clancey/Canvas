@@ -68,19 +68,46 @@ namespace Xamarin.Canvas.Android
 			Click += HandleClick;
 		}
 
+		public override bool OnInterceptTouchEvent (MotionEvent e)
+		{
+			if (node.TouchEvents) {
+				if (e.Action == MotionEventActions.Move || e.Action == MotionEventActions.Down || e.Action == MotionEventActions.Up) {
+					if (e.Action == MotionEventActions.Down || velocity == null)
+						velocity = VelocityTracker.Obtain ();
+					
+					node.Touch (new NodeTouchEvent (e, velocity));
+					
+					if (e.Action == MotionEventActions.Up)
+						velocity = null;
+				}
+			}
+			return false;
+		}
+
+		Point down, up;
 		public override bool OnTouchEvent (MotionEvent e)
 		{
-			if (e.Action == MotionEventActions.Move ||  e.Action == MotionEventActions.Down || e.Action == MotionEventActions.Up) {
-				if (e.Action == MotionEventActions.Down || velocity == null)
-					velocity = VelocityTracker.Obtain ();
-
-				var result = node.Touch (new NodeTouchEvent (e, velocity));
-
-				if (e.Action == MotionEventActions.Up)
-					velocity = null;
-
-				return result;
+			if (e.Action == MotionEventActions.Down) {
+				down = new Point (e.RawX, e.RawY);
+			} else if (e.Action == MotionEventActions.Up) {
+				up = new Point (e.RawX, e.RawY);
 			}
+
+			if (node.TouchEvents) {
+				if (e.Action == MotionEventActions.Move || e.Action == MotionEventActions.Down || e.Action == MotionEventActions.Up) {
+					if (e.Action == MotionEventActions.Down || velocity == null)
+						velocity = VelocityTracker.Obtain ();
+
+					var result = node.Touch (new NodeTouchEvent (e, velocity));
+
+					if (e.Action == MotionEventActions.Up)
+						velocity = null;
+
+					return result;
+				}
+			}
+
+
 			return base.OnTouchEvent (e);
 		}
 
@@ -101,7 +128,8 @@ namespace Xamarin.Canvas.Android
 
 		void HandleClick (object sender, EventArgs e)
 		{
-			node.Tap (new TapEventArgs (1, GestureState.Ended));
+			if (up.Distance (down) < 100)
+				node.Tap (new TapEventArgs (1, GestureState.Ended));
 		}
 
 		protected virtual void UpdateNativeView ()

@@ -22,8 +22,12 @@ namespace Xamarin.Canvas.iOS
 		{
 			this.node = node;
 			var imageView = new UIImageView (new UIImage (node.File));
+			imageView.Layer.ShouldRasterize = true;
 			imageView.Opaque = node.IsOpaque;
-			SetView (imageView);		
+			SetView (imageView);
+
+			imageView.Layer.ShadowOpacity = 0.5f;
+			imageView.Layer.ShadowOffset = new SizeF (0, 0);
 		}
 	}
 	

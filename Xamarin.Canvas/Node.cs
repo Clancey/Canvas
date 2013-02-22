@@ -180,6 +180,7 @@ namespace Xamarin.Canvas
 		public bool Draggable { get; set; }
 		public bool CanFocus { get; set; }
 		public bool HasFocus { get; private set; }
+		public bool TouchEvents { get; set; }
 		public List<MenuEntry> MenuItems { get; set; }
 
 		public object Renderer { get; set; }
