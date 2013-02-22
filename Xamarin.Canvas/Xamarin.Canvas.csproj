@@ -53,6 +53,7 @@
     <Compile Include="CachedFunc.cs" />
     <Compile Include="ICanvasEngine.cs" />
     <Compile Include="ButtonNode.cs" />
+    <Compile Include="RenderHints.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Xamarin.Animation\Xamarin.Motion.csproj">

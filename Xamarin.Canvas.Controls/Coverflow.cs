@@ -40,6 +40,8 @@ namespace Xamarin.Canvas.Controls
 			TouchEvents = true;
 
 			Add (label);
+
+			Hints.Shadow = true;
 		}
 		
 		public Coverflow (IEnumerable<string> files) : this ()

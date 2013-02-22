@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 
 using Xamarin.Motion;
+using System.ComponentModel;
 
 namespace Xamarin.Canvas
 {
@@ -139,33 +140,6 @@ namespace Xamarin.Canvas
 		}
 	}
 
-	internal class NodeDataStore
-	{
-		public double X;
-		public double Y;
-		public double Width;
-		public double Height;
-		public double Scale;
-		public double Rotation;
-		public double RotationX;
-		public double RotationY;
-		public double Opacity;
-
-		public virtual Animation Tween (NodeDataStore target)
-		{
-			var anim = new Animation ();
-			if (X != target.X) anim.Insert (0, 1, new Animation (f => X = f, X, target.X));
-			if (Y != target.Y) anim.Insert (0, 1, new Animation (f => Y = f, Y, target.Y));
-			if (Width != target.Width) anim.Insert (0, 1, new Animation (f => Width = f, Width, target.Width));
-			if (Height != target.Height) anim.Insert (0, 1, new Animation (f => Height = f, Height, target.Height));
-			if (Scale != target.Scale) anim.Insert (0, 1, new Animation (f => Scale = f, Scale, target.Scale));
-			if (Rotation != target.Rotation) anim.Insert (0, 1, new Animation (f => Rotation = f, Rotation, target.Rotation));
-			if (RotationX != target.RotationX) anim.Insert (0, 1, new Animation (f => RotationX = f, RotationX, target.RotationX));
-			if (RotationY != target.RotationY) anim.Insert (0, 1, new Animation (f => RotationY = f, RotationY, target.RotationY));
-			if (Opacity != target.Opacity) anim.Insert (0, 1, new Animation (f => Opacity = f, Opacity, target.Opacity));
-			return anim;
-		}
-	}
 	
 	public class Node : IComparable<Node>, Animatable
 	{
@@ -334,7 +308,9 @@ namespace Xamarin.Canvas
 				preferedHeight = value;
 			}
 		}
-		
+
+		public RenderHints Hints { get; private set; }
+
 		public event EventHandler ActivatedEvent;
 		public event EventHandler CanvasSet;
 
@@ -391,6 +367,8 @@ namespace Xamarin.Canvas
 
 			AnchorX = 0.5;
 			AnchorY = 0.5;
+
+			Hints = new RenderHints ();
 		}
 
 		protected void SendChildAdded (Node child)
