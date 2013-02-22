@@ -103,6 +103,7 @@
     <Compile Include="ImageNodeRenderer.cs" />
     <Compile Include="NativeViewRenderer.cs" />
     <Compile Include="ButtonNodeRenderer.cs" />
+    <Compile Include="TableNodeRenderer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

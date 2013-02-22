@@ -26,8 +26,10 @@ namespace Xamarin.Canvas.iOS
 			imageView.Opaque = node.IsOpaque;
 			SetView (imageView);
 
-			imageView.Layer.ShadowOpacity = 0.5f;
-			imageView.Layer.ShadowOffset = new SizeF (0, 0);
+			if (node.Hints.Shadow) {
+				imageView.Layer.ShadowOpacity = 0.5f;
+				imageView.Layer.ShadowOffset = new SizeF (0, 0);
+			}
 		}
 	}
 	

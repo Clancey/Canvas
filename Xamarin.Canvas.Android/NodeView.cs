@@ -152,7 +152,7 @@ namespace Xamarin.Canvas.Android
 		public void LayoutByNode ()
 		{
 			UpdateNativeView ();
-			Layout ((int)node.X, (int)node.Y, (int)(node.X + node.Width), (int)(node.Y + node.Height));
+			Layout (0, 0, (int)(node.Width), (int)(node.Height));
 			OnLayout (true, Left, Top, Right, Bottom);
 		}
 

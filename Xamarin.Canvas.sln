@@ -235,6 +235,6 @@ Global
 		{DD36008C-2F27-48F9-9E44-617645512E09}.Release|x86.Build.0 = Release|iPhoneSimulator
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = Xamarin.Canvas.iOS.Example\Xamarin.Canvas.iOS.Example.csproj
+		StartupItem = Xamarin.Canvas.Android\Xamarin.Canvas.Android.csproj
 	EndGlobalSection
 EndGlobal

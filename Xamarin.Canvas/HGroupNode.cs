@@ -7,7 +7,7 @@ using System.Linq;
 namespace Xamarin.Canvas
 {
 
-	public class HBoxNode : GroupNode
+	public class HGroupNode : GroupNode
 	{
 		protected override void OnSizeAllocated (double width, double height)
 		{

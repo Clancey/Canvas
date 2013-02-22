@@ -12,13 +12,15 @@ namespace Xamarin.Canvas.Controls
 
 		public CoverflowItem (string file) : base (file) 
 		{
+			Name = file;
 		}
 	}
 
 	public class Coverflow : GroupNode
 	{
 		List<CoverflowItem> images;
-		LabelNode label;
+		LabelNode leftLabel;
+		LabelNode rightLabel;
 		int imagesize;
 		Point last;
 
@@ -35,11 +37,13 @@ namespace Xamarin.Canvas.Controls
 		public Coverflow ()
 		{
 			images = new List<CoverflowItem> ();
-			label = new LabelNode ();
+			leftLabel = new LabelNode ();
+			rightLabel = new LabelNode ();
 			imagesize = 100;
 			TouchEvents = true;
 
-			Add (label);
+			base.Add (leftLabel);
+			base.Add (rightLabel);
 
 			Hints.Shadow = true;
 		}
@@ -108,6 +112,8 @@ namespace Xamarin.Canvas.Controls
 
 		void LayoutChildren (double offset)
 		{
+			// hide labels so we dont get double labels on the center node
+			leftLabel.Opacity = rightLabel.Opacity = 0;
 			imagesize = (int)Math.Min (Height, Width / 1.8) / 2;
 			double position = -offset;
 			foreach (var image in images) {
@@ -120,6 +126,8 @@ namespace Xamarin.Canvas.Controls
 					.Concat (Children.Where (n => n.RotationY > 0).OrderByDescending (n => n.RotationY)).ToList ();
 			SortChildren (newOrder);
 
+			leftLabel.QueueDraw ();
+			rightLabel.QueueDraw ();
 		}
 
 		void LayoutChildForPosition (CoverflowItem item, int size, double position)
@@ -135,6 +143,21 @@ namespace Xamarin.Canvas.Controls
 			item.RotationY = (rotation * 75).Clamp (-72, 72);
 			item.X = item.X.Clamp (-size - 10, Width + 10);
 			item.QueueDraw ();
+
+			LabelNode label = null;
+			if (position <= 0 && position > -1) {
+				label = leftLabel;
+			} else if (position > 0 && position < 1) {
+				label = rightLabel;
+			}
+
+			if (label != null) {
+				label.Opacity = Math.Max (0, 1 - Math.Abs (position));
+				label.Text = item.Name;
+				label.X = center.X - label.Width / 2;
+				label.Y = center.Y + size * 0.6;
+				label.SetSize (label.PreferedWidth, label.PreferedHeight);
+			}
 		}
 	}
 }

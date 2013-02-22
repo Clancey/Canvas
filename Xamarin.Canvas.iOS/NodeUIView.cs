@@ -62,6 +62,8 @@ namespace Xamarin.Canvas.iOS
 		UITapGestureRecognizer doubleTap;
 
 		public Node Node { get { return node; } }
+
+		public virtual bool HandlesOwnChildren { get { return false; } }
 		
 		public NodeUIView (Node node)
 		{

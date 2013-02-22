@@ -21,6 +21,7 @@ namespace Xamarin.Canvas.Android
 		{
 			this.label = label;
 			this.view = new TextView (context);
+			view.Text = label.Text;
 			AddView (view);
 		}
 

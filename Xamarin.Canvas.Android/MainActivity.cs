@@ -26,7 +26,7 @@ namespace Xamarin.Canvas.Android
 
 			Xamarin.Motion.Tweener.Sync = this;
 			canvas = new Canvas (this.BaseContext);
-			canvas.SetBackground (new Color (0, 0, 1));
+			canvas.SetBackground (new Color (1, 1, 1));
 
 			coverflow = new Xamarin.Canvas.Controls.Coverflow (new [] {
 				"cover1.jpg", "cover2.jpg", "cover3.jpg", "cover4.jpg", "cover5.jpg", "cover6.jpg", 

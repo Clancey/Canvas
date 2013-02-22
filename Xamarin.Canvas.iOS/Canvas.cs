@@ -51,8 +51,23 @@ namespace Xamarin.Canvas.iOS
 			return new NodeUIView (node);
 		}
 
+		bool ParentHandles (Node node)
+		{
+			node = node.Parent;
+			while (node != null) {
+				if (node.Renderer != null && (node.Renderer as NodeUIView).HandlesOwnChildren)
+					return true;
+				node = node.Parent;
+			}
+
+			return false;
+		}
+
 		void AddChild (Node node)
 		{
+			if (ParentHandles (node))
+				return;
+
 			if (node.Renderer == null) {
 				NodeUIView view = ViewForNode (node);
 				node.Renderer = view;
@@ -63,6 +78,8 @@ namespace Xamarin.Canvas.iOS
 				} else {
 					AddSubview (view);
 				}
+			} else {
+				Console.Error.WriteLine ("Potential node double add");
 			}
 
 			if (node.Children != null)
@@ -72,7 +89,10 @@ namespace Xamarin.Canvas.iOS
 
 		void RemoveChild (Node node)
 		{
-
+			if (node.Renderer != null) {
+				NodeUIView view = node.Renderer as NodeUIView;
+				view.RemoveFromSuperview ();
+			}
 		}
 
 		#region ICanvas implementation
@@ -117,6 +137,8 @@ namespace Xamarin.Canvas.iOS
 
 		public Size TextExtents (string text, TextOptions options)
 		{
+			if (text == null)
+				return new Size ();
 			NSString str = new NSString (text);
 			var size = str.StringSize (UIFont.SystemFontOfSize (UIFont.LabelFontSize));
 			return new Size (size.Width, size.Height);

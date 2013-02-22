@@ -22,6 +22,8 @@ namespace Xamarin.Canvas
 				return text;
 			}
 			set {
+				if (text == value)
+					return;
 				text = value;
 				UpdateSize ();
 				QueueDraw ();

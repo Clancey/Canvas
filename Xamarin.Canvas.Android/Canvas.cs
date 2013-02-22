@@ -127,6 +127,8 @@ namespace Xamarin.Canvas.Android
 
 		protected override void OnLayout (bool changed, int l, int t, int r, int b)
 		{
+			if (!changed)
+				return;
 			root.SetSize (r - l, b - t);
 
 			for (int i = 0; i < this.ChildCount; i++) {

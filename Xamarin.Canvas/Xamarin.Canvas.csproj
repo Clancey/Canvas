@@ -46,7 +46,6 @@
     <Compile Include="GroupNode.cs" />
     <Compile Include="IKeyEvent.cs" />
     <Compile Include="PolygonNode.cs" />
-    <Compile Include="HBoxNode.cs" />
     <Compile Include="ImageNode.cs" />
     <Compile Include="Size.cs" />
     <Compile Include="LabelNode.cs" />
@@ -54,6 +53,9 @@
     <Compile Include="ICanvasEngine.cs" />
     <Compile Include="ButtonNode.cs" />
     <Compile Include="RenderHints.cs" />
+    <Compile Include="HGroupNode.cs" />
+    <Compile Include="VGroupNode.cs" />
+    <Compile Include="TableNode.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Xamarin.Animation\Xamarin.Motion.csproj">
